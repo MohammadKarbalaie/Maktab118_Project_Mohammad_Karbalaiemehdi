@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import {Vazirmatn} from "next/font/google";
 import "./globals.css";
-import ShopLayout from "./Shop/layout";
+
 
 const vazir = Vazirmatn({
   subsets: ['latin', 'arabic'],  
@@ -26,10 +26,7 @@ export default function RootLayout({
       <body
         className={`${ vazir.variable} antialiased`}
       >
-         
-        <ShopLayout>
         {children}
-        </ShopLayout>
       </body>
     </html>
   );
