@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { AiOutlineMenu, AiOutlineProduct, AiOutlineTags, AiOutlineUnorderedList, AiOutlineUsergroupAdd } from "react-icons/ai";
 
@@ -12,6 +13,7 @@ function Sidebar() {
       </div>
       <div className="p-6 my-2 w-full text-center">
         <ul className="flex flex-col items-center">
+         <Link href="/admin/products">
           <li
             className="px-6 w-60 py-3 cursor-pointer
            hover:bg-gray-50/10 transition duration-300
@@ -20,6 +22,8 @@ function Sidebar() {
             <AiOutlineProduct className="text-2xl" />
             محصولات
           </li>
+          </Link>
+          <Link href="/admin/categories">
           <li
             className="px-6 w-60 py-3 cursor-pointer hover:bg-gray-50/10
            transition duration-300 rounded-md flex gap-4 items-center justify-start"
@@ -27,6 +31,8 @@ function Sidebar() {
             <AiOutlineTags className="text-2xl" />
             دسته بندی ها
           </li>
+          </Link>
+          <Link href="/admin/orders">
           <li
             className="px-6 w-60 py-3 cursor-pointer hover:bg-gray-50/10
            transition duration-300 rounded-md flex gap-4 items-center justify-start"
@@ -34,6 +40,8 @@ function Sidebar() {
             <AiOutlineUnorderedList className="text-2xl" />
             سفارشات
           </li>
+          </Link>
+          <Link href="/admin/users">
           <li
             className="px-6 w-60 py-3 cursor-pointer hover:bg-gray-50/10
            transition duration-300 rounded-md flex gap-4 items-center justify-start"
@@ -41,6 +49,7 @@ function Sidebar() {
             <AiOutlineUsergroupAdd className="text-2xl" />
             کاربران
           </li>
+          </Link>
         </ul>
       </div>
     </div>

@@ -16,7 +16,7 @@ function Page() {
         <Sidebar />
       </div>
       <div className="lg:hidden flex justify-between p-4">
-        <button className="text-2xl p-2 rounded-md" onClick={toggleSidebar}>
+        <button className="text-2xl p-2 rounded-md absolute left-0" onClick={toggleSidebar}>
           &#9776;
         </button>
       </div>
@@ -24,12 +24,12 @@ function Page() {
       <div
         className={`${
           isSidebarOpen ? "block" : "hidden"
-        } lg:hidden fixed top-0 left-0 h-full bg-gray-300/100 z-50 w-64`}
+        } lg:hidde fixed top-0 right-0 h-full z-50 w-64 `}
       >
         <Sidebar />
       </div>
 
-      <div className="lg:w-4/4 w-full">
+      <div className="w-full xl:-mr-20 lg:-mr-20 md:mr-0 sm:mr-0 xl:w-full lg:w-4/4 px-2 xl:px-0 lg:px-0 md:px-0">
         <DashboardLayout />
       </div>
     </div>

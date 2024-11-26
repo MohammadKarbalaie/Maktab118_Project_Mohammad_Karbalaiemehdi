@@ -3,7 +3,7 @@ import React from 'react'
 function DashboardLayout() {
   return (
     <div className="w-full min-h-screen rtl flex bg-gray-50">
-    <div className="p-4 flex flex-col justify-start items-start min-h-screen">
+    <div className="p-4 w-full flex flex-col justify-start items-start min-h-screen">
       <div className="block w-full max-w-full bg-transparent text-white shadow-none rounded-xl transition-all px-0 py-1">
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
           <div className="capitalize">
@@ -52,8 +52,8 @@ function DashboardLayout() {
           </div>
       </div>
       </div>
-      <div className="mt-12">
-      <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="w-full mt-12">
+      <div className=" mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
           <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
           <div className="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-blue-500/40 shadow-lg absolute -mt-4 left-0  grid h-16 w-16 place-items-center">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="w-6 h-6 text-white">
