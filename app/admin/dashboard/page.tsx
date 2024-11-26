@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import DashboardLayout from "../components/DashboardLayout";
+import DashboardLayout from "../components/Dashboard/DashboardLayout";
 
 function Page() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,7 +29,7 @@ function Page() {
         <Sidebar />
       </div>
 
-      <div className="w-full xl:-mr-20 lg:-mr-20 md:mr-0 sm:mr-0 xl:w-full lg:w-4/4 px-2 xl:px-0 lg:px-0 md:px-0">
+      <div className="w-full 2xl:w-full 2xl:-mr-[125px] xl:-mr-[20px] lg:-mr-[30px] md:mr-0 sm:mr-0 xl:w-full lg:w-4/4 px-2 xl:px-0 lg:px-0 md:px-0">
         <DashboardLayout />
       </div>
     </div>

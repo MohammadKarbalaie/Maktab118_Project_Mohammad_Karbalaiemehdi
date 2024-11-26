@@ -1,59 +1,66 @@
+import { BarChart2, DollarSign, Menu, ShoppingBag, ShoppingCart, Users } from "lucide-react";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import React from "react";
-import { AiOutlineMenu, AiOutlineProduct, AiOutlineTags, AiOutlineUnorderedList, AiOutlineUsergroupAdd } from "react-icons/ai";
 
-function Sidebar() {
-  return (
-    <div className="h-[98vh] mx-2 my-2 w-72 lg:w-64 flex flex-col bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-xl ">
-      <div className="p-6 my-2 border-b w-full text-center shadow-gray-700 shadow-lg">
-        <p className="text-xl flex items-center justify-center gap-2">
-          <AiOutlineMenu />
-          داشبورد{" "}
-        </p>
-      </div>
-      <div className="p-6 my-2 w-full text-center">
-        <ul className="flex flex-col items-center">
-         <Link href="/admin/products">
-          <li
-            className="px-6 w-60 py-3 cursor-pointer
-           hover:bg-gray-50/10 transition duration-300
-            rounded-md flex gap-4 items-center justify-start"
-          >
-            <AiOutlineProduct className="text-2xl" />
-            محصولات
-          </li>
-          </Link>
-          <Link href="/admin/categories">
-          <li
-            className="px-6 w-60 py-3 cursor-pointer hover:bg-gray-50/10
-           transition duration-300 rounded-md flex gap-4 items-center justify-start"
-          >
-            <AiOutlineTags className="text-2xl" />
-            دسته بندی ها
-          </li>
-          </Link>
-          <Link href="/admin/orders">
-          <li
-            className="px-6 w-60 py-3 cursor-pointer hover:bg-gray-50/10
-           transition duration-300 rounded-md flex gap-4 items-center justify-start"
-          >
-            <AiOutlineUnorderedList className="text-2xl" />
-            سفارشات
-          </li>
-          </Link>
-          <Link href="/admin/users">
-          <li
-            className="px-6 w-60 py-3 cursor-pointer hover:bg-gray-50/10
-           transition duration-300 rounded-md flex gap-4 items-center justify-start"
-          >
-            <AiOutlineUsergroupAdd className="text-2xl" />
-            کاربران
-          </li>
-          </Link>
-        </ul>
-      </div>
-    </div>
-  );
-}
 
+const SIDEBAR_ITEMS = [
+	{
+		name: "پنل ادمین",
+		icon: BarChart2,
+		color: "#6366f1",
+		href: "/admin/dashboard",
+	},
+	{ name: "محصولات", icon: ShoppingBag, color: "#8B5CF6", href: "/admin/products" },
+	{ name: "کاربران", icon: Users, color: "#EC4899", href: "/admin/users" },
+	{ name: "دسته بندی ها", icon: DollarSign, color: "#10B981", href: "/admin/categories" },
+	{ name: "سفارشات", icon: ShoppingCart, color: "#F59E0B", href: "/admin/orders" },
+];
+
+const Sidebar = () => {
+	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+	return (
+		<motion.div
+			className={`relative z-10 transition-all h-full duration-300 ease-in-out flex-shrink-0 ${
+				isSidebarOpen ? "w-[306px]" : "w-20"
+			}`}
+			animate={{ width: isSidebarOpen ? 306 : 80 }}
+		>
+			<div className='h-full bg-gray-900 text-white backdrop-blur-md p-4 flex flex-col border-r border-gray-700'>
+				<motion.button
+					whileHover={{ scale: 1.1 }}
+					whileTap={{ scale: 0.9 }}
+					onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+					className='p-2 rounded-full hover:bg-gray-700 transition-colors max-w-fit'
+				>
+					<Menu size={24} />
+				</motion.button>
+
+				<nav className='mt-8 flex-grow'>
+					{SIDEBAR_ITEMS.map((item) => (
+						<Link key={item.href} href={item.href} >
+							<motion.div className='flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2'>
+								<item.icon size={20} style={{color: item.color, minWidth: "20px" }} />
+								<AnimatePresence>
+									{isSidebarOpen && (
+										<motion.span
+											className='mr-2 whitespace-nowrap'
+											initial={{ opacity: 0, width: 0 }}
+											animate={{ opacity: 1, width: "auto" }}
+											exit={{ opacity: 0, width: 0 }}
+											transition={{ duration: 0.2, delay: 0.3 }}
+										>
+											{item.name}
+										</motion.span>
+									)}
+								</AnimatePresence>
+							</motion.div>
+						</Link>
+					))}
+				</nav>
+			</div>
+		</motion.div>
+	);
+};
 export default Sidebar;
