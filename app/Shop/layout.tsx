@@ -1,5 +1,4 @@
-import Footer from "./shared/Footer";
-import Header from "./shared/Header";
+
 
 export default function ShopLayout({
   children,
@@ -8,11 +7,11 @@ export default function ShopLayout({
 }>) {
   return (
     <div>
-      <Header />
+      
       <div className="min-h-screen">
         {children}
       </div>
-      <Footer />
+      
     </div>
   );
 }

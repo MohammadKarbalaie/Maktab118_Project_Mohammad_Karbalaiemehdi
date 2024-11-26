@@ -1,9 +1,9 @@
 import React from 'react'
 
-function page() {
+function auth() {
   return (
-    <div>auth</div>
+    <div></div>
   )
 }
 
-export default page
+export default auth
