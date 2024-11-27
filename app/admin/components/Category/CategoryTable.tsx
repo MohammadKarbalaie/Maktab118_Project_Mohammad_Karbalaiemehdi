@@ -6,6 +6,7 @@ import { CreditCard, DollarSign, ShoppingCart, TrendingUp } from "lucide-react";
 import SalesOverviewChart from "./SalesOverviewChart";
 import SalesByCategoryChart from "./SalesByCategoryChart";
 import DailySalesTrend from "./DailySalesTrend";
+import CategoryTbl from "./CategoryTbl";
 
 const salesStats = {
 	totalRevenue: "$1,234,567",
@@ -42,7 +43,7 @@ const CategoryPage = () => {
 					/>
 					<StatCard name='درصد محصولات به زیرگروه' icon={CreditCard} value={salesStats.salesGrowth} color='#EF4444' />
 				</motion.div>
-
+<CategoryTbl/>
 				<SalesOverviewChart />
 
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8'>

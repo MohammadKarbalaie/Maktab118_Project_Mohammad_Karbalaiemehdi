@@ -95,7 +95,7 @@ const SignupPage = () => {
 
         <button
           type="submit"
-          className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-blue-600"
+          className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-800"
         >
           ثبت‌نام
         </button>

@@ -1,4 +1,4 @@
-import { BarChart2, DollarSign, Menu, ShoppingBag, ShoppingCart, Users } from "lucide-react";
+import { BarChart2, Group, Menu, ShoppingBag, ShoppingCart, Users } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
@@ -13,7 +13,7 @@ const SIDEBAR_ITEMS = [
 	},
 	{ name: "محصولات", icon: ShoppingBag, color: "#8B5CF6", href: "/admin/products" },
 	{ name: "کاربران", icon: Users, color: "#EC4899", href: "/admin/users" },
-	{ name: "دسته بندی ها", icon: DollarSign, color: "#10B981", href: "/admin/categories" },
+	{ name: "دسته بندی ها", icon: Group, color: "#10B981", href: "/admin/categories" },
 	{ name: "سفارشات", icon: ShoppingCart, color: "#F59E0B", href: "/admin/orders" },
 ];
 

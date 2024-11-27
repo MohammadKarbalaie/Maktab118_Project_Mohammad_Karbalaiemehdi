@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Eye } from "lucide-react";
+import { Search } from "lucide-react";
+import { AiOutlineCloseCircle, AiOutlineHourglass, AiOutlineSend } from "react-icons/ai";
 
 const orderData = [
 	{ id: "ORD001", customer: "John Doe", total: 235.4, status: " ارسال شده", date: "2023-07-01" },
@@ -106,8 +107,14 @@ const OrdersTable = () => {
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-950'>{order.date}</td>
 								<td className='px-6 py-4 whitespace-nowrap text-sm text-gray-950'>
-									<button className='text-indigo-400 hover:text-indigo-300 mr-2'>
-										<Eye size={18} />
+									<button className='text-green-600 hover:text-indigo-300 mr-2'>
+										<AiOutlineSend size={18} />
+									</button>
+									<button className='text-yellow-700 hover:text-indigo-300 mr-2'>
+										<AiOutlineHourglass size={18} />
+									</button>
+									<button className='text-red-400 hover:text-indigo-300 mr-2'>
+										<AiOutlineCloseCircle size={18} />
 									</button>
 								</td>
 							</motion.tr>

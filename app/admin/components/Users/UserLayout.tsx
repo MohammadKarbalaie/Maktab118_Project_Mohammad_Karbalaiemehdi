@@ -5,8 +5,6 @@ import { motion } from "framer-motion";
 import Header from "../Header";
 import StatCard from "../StatCard";
 import UsersTable from "./UsersTable";
-import UserGrowthChart from "./UserGrowthChart";
-import UserActivityHeatmap from "./UserActivityHeatmap";
 import UserDemographicsChart from "./UserDemographicsChart";
 
 const userStats = {
@@ -49,8 +47,6 @@ const UsersPage = () => {
 
 				{/* USER CHARTS */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8'>
-					<UserGrowthChart />
-					<UserActivityHeatmap />
 					<UserDemographicsChart />
 				</div>
 			</main>
