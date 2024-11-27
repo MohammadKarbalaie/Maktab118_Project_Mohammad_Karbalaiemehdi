@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        vazir: ["Vazirmatn", "sans-serif"],      
+      },
     },
   },
   plugins: [],
