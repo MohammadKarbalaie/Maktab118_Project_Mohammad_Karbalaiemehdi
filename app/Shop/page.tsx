@@ -1,9 +1,9 @@
 import React from "react";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
-import Hero from "./components/Hero";
-import MultiSlideCarousel from "./components/MultiSlideCarousel";
-import BikeCarousel from "./components/PopularBikesCarousel";
+import Hero from "./components/Shop/Hero";
+import MultiSlideCarousel from "./components/Shop/MultiSlideCarousel";
+import BikeCarousel from "./components/Shop/PopularBikesCarousel";
 
 function HomeShop() {
   return (
