@@ -124,6 +124,12 @@ const ProductsTable: React.FC = () => {
         </table>
       </div>
     </motion.div>
+    <div>
+      <button className="px-6 py-3 bg-gray-950
+       text-white rounded-xl hover:bg-indigo-800
+        hover:text-gray-100 transition duration-200"
+      >ایجاد محصول جدید </button>
+    </div>
     </div>
   );
 };
