@@ -54,9 +54,9 @@ const AddProductModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <div className="mt-4 p-6 bg-gray-800 rounded-xl shadow-lg w-full max-w-lg">
             <form onSubmit={handleSubmit} className='grid gap-4'>
                 <h2 className='text-white text-xl'>افزودن کالای جدید</h2>
+                <input type="text" name="name" placeholder="Product Name" onChange={handleChange} required className="p-2 bg-gray-700 text-white rounded-lg"/>
                 <input type="text" name="category" placeholder="Category" onChange={handleChange} required className="p-2 bg-gray-700 text-white rounded-lg"/>
                 <input type="text" name="subcategory" placeholder="Subcategory" onChange={handleChange} required className="p-2 bg-gray-700 text-white rounded-lg"/>
-                <input type="text" name="name" placeholder="Product Name" onChange={handleChange} required className="p-2 bg-gray-700 text-white rounded-lg"/>
                 <input type="number" name="price" placeholder="Price" onChange={handleChange} required className="p-2 bg-gray-700 text-white rounded-lg"/>
                 <input type="number" name="quantity" placeholder="Quantity" onChange={handleChange} required className="p-2 bg-gray-700 text-white rounded-lg"/>
                 <input type="text" name="brand" placeholder="Brand" onChange={handleChange} required className="p-2 bg-gray-700 text-white rounded-lg"/>
