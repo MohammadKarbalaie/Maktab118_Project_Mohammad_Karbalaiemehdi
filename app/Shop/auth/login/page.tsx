@@ -87,8 +87,8 @@ const Login = () => {
             </button>
           </div>
           <div className="flex items-center justify-between">
-            <span className="flex gap-4"><input type="checkbox"/><p>فراموشی کلمه عبور</p></span>
             <Link href="/Shop/auth/signup"><p>ثبت نام </p></Link>
+            <Link href="/admin/auth/login"><p>ورود ادمین</p></Link>
           </div>
         </form>
       </div>

@@ -3,9 +3,6 @@ import { motion } from "framer-motion";
 import Header from "../Header";
 import StatCard from "../StatCard";
 import { CreditCard, DollarSign, ShoppingCart, TrendingUp } from "lucide-react";
-import SalesOverviewChart from "./SalesOverviewChart";
-import SalesByCategoryChart from "./SalesByCategoryChart";
-import DailySalesTrend from "./DailySalesTrend";
 import CategoryTbl from "./CategoryTbl";
 
 const salesStats = {
@@ -20,8 +17,7 @@ const CategoryPage = () => {
 		<div className='flex-1 overflow-auto relative z-10'>
 			<Header title='دسته بندی ها' />
 
-			<main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
-				{/* SALES STATS */}
+			<main className='max-w-7xl mx-auto py-6 px-4 lg:px-8  h-screen'>
 				<motion.div
 					className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8'
 					initial={{ opacity: 0, y: 20 }}
@@ -43,12 +39,12 @@ const CategoryPage = () => {
 					/>
 					<StatCard name='درصد محصولات به زیرگروه' icon={CreditCard} value={salesStats.salesGrowth} color='#EF4444' />
 				</motion.div>
-<CategoryTbl/>
-				<SalesOverviewChart />
+				<CategoryTbl/>
+				
 
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8'>
-					<SalesByCategoryChart />
-					<DailySalesTrend />
+					
+				
 				</div>
 			</main>
 		</div>
