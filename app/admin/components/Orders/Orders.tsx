@@ -1,11 +1,8 @@
 "use client"
 import { CheckCircle, Clock, DollarSign, ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
-
 import Header from "../Header";
 import StatCard from "../StatCard";
-import DailyOrders from "../Orders/DailyOrders";
-import OrderDistribution from "../Orders/OrderDistribution";
 import OrdersTable from "../Orders/OrdersTable";
 
 const orderStats = {
@@ -39,8 +36,7 @@ const OrdersPage = () => {
 				</motion.div>
 				<OrdersTable />
 				<div className='grid mt-6 grid-cols-1 lg:grid-cols-2 gap-8 mb-8'>
-					<DailyOrders />
-					<OrderDistribution />
+		
 				</div>
 
 				

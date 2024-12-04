@@ -101,10 +101,7 @@ const UsersTable = () => {
               <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
                 دسترسی
               </th>
-              <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
-                وضعیت
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-950 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-950 uppercase tracking-wider">
                 اقدامات
               </th>
             </tr>
@@ -126,7 +123,7 @@ const UsersTable = () => {
                       </div>
                     </div>
                     <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-950">
+                      <div className="text-sm font-medium mr-4 text-gray-950">
                         {user.name}
                       </div>
                     </div>
@@ -139,18 +136,6 @@ const UsersTable = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-800 text-blue-100">
                     {user.role}
-                  </span>
-                </td>
-
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2  inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      user.status === "فعال"
-                        ? "bg-green-800 text-green-100"
-                        : "bg-red-800 text-red-100"
-                    }`}
-                  >
-                    {user.status}
                   </span>
                 </td>
 

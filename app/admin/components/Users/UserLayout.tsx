@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Header from "../Header";
 import StatCard from "../StatCard";
 import UsersTable from "./UsersTable";
-import UserDemographicsChart from "./UserDemographicsChart";
 
 const userStats = {
 	totalUsers: 152845,
@@ -19,7 +18,7 @@ const UsersPage = () => {
 		<div className='flex-1 overflow-auto relative z-10'>
 			<Header title='کاربران' />
 			
-			<main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
+			<main className='max-w-7xl mx-auto py-6 px-4 h-[100vh] lg:px-8'>
 
 				<motion.div
 					className='grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8'
@@ -46,7 +45,6 @@ const UsersPage = () => {
 				<UsersTable />
 
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8'>
-					<UserDemographicsChart />
 				</div>
 			</main>
 		</div>
