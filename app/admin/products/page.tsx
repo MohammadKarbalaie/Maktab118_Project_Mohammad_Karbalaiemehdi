@@ -1,8 +1,7 @@
-"use client"
-import React, { useState } from 'react'
-import Sidebar  from '../components/Sidebar'
-import ProductsTable from '../components/Product/Producttable';
-
+"use client";
+import React, { useState } from "react";
+import Sidebar from "../components/Sidebar";
+import ProductsTable from "../components/Product/Producttable";
 
 function Page() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -12,25 +11,35 @@ function Page() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col lg:flex-row gap-4 lg:gap-8 bg-gray-50">
-      <div className="hidden lg:block lg:w-1/4">
+    <div className="w-full min-h-screen flex flex-col lg:flex-row gap-4 bg-gray-50">
+      <div className="hidden lg:block lg:w-1/4 bg-white shadow-lg">
         <Sidebar />
       </div>
-      <div className="lg:hidden flex justify-between p-4">
-        <button className="text-2xl p-2 rounded-md absolute left-0" onClick={toggleSidebar}>
+
+      <div className="lg:hidden flex justify-between items-center p-4 bg-white shadow-md">
+        <button
+          className="text-2xl px-4 py-2 text-gray-700 rounded-md"
+          onClick={toggleSidebar}
+        >
           &#9776;
         </button>
       </div>
 
       <div
-        className={`${
-          isSidebarOpen ? "block" : "hidden"
-        } lg:hidde fixed top-0 right-0 h-full z-50 w-64 `}
+        className={`fixed top-0 left-0 h-full bg-white shadow-lg z-50 w-64 transition-transform duration-300 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:hidden`}
       >
+        <button
+          className="text-gray-700 text-xl px-4 py-2 absolute top-4 right-4"
+          onClick={toggleSidebar}
+        >
+          ✕
+        </button>
         <Sidebar />
       </div>
 
-      <div className="w-full xl:-mr-20 lg:-mr-20 md:mr-0 sm:mr-0 xl:w-full lg:w-4/4 m-6 xl:px-0 lg:px-0 md:px-0">
+      <div className="flex-1 xl:ml-20 p-4 lg:ml-0 ">
         <ProductsTable />
       </div>
     </div>

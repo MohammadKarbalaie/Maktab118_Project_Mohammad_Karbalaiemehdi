@@ -17,7 +17,7 @@ function Page() {
         <Sidebar />
       </div>
       <div className="lg:hidden flex justify-between p-4">
-        <button className="text-2xl p-2 rounded-md absolute left-0" onClick={toggleSidebar}>
+        <button className="text-2xl px-2 rounded-md absolute left-0" onClick={toggleSidebar}>
           &#9776;
         </button>
       </div>

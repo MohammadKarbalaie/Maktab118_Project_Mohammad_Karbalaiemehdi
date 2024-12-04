@@ -87,49 +87,50 @@ const OrdersTable = () => {
 
   return (
     <motion.div
-      className="bg-gray-200 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700"
+      className="bg-gray-200 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-4 sm:p-6 border border-gray-700"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
     >
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-950">لیست سفارشات</h2>
-        <div className="relative">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-950">
+          لیست سفارشات
+        </h2>
+        <div className="relative w-full sm:w-auto">
           <input
             type="text"
             placeholder="جستجوی سفارشات ..."
-            className="bg-gray-300 text-gray
-                                      placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-auto bg-gray-300 text-gray placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={handleSearch}
           />
           <Search
-            className="absolute left-3 top-2.5 text-gray-950 "
+            className="absolute left-3 top-2.5 text-gray-950"
             size={18}
           />
         </div>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-700">
+        <table className="min-w-full divide-y divide-gray-700 text-sm sm:text-base">
           <thead>
             <tr>
-              <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
+              <th className="px-2 sm:px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
                 شماره سفارش
               </th>
-              <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
+              <th className="px-2 sm:px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
                 مشتری
               </th>
-              <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
+              <th className="px-2 sm:px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
                 جمع مبلغ
               </th>
-              <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
+              <th className="px-2 sm:px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
                 وضعیت
               </th>
-              <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
+              <th className="px-2 sm:px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
                 تاریخ
               </th>
-              <th className="px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
+              <th className="px-2 sm:px-6 py-3 text-start text-xs font-medium text-gray-950 uppercase tracking-wider">
                 اقدام
               </th>
             </tr>
@@ -144,16 +145,16 @@ const OrdersTable = () => {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-950">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
                     {order._id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-950">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
                     {order.user}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-950">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
                     ${order.totalPrice.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         order.deliveryStatus
@@ -164,12 +165,12 @@ const OrdersTable = () => {
                       {order.deliveryStatus ? "ارسال شده" : "در حال پردازش"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-950">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950">
                     {new Date(order.deliveryDate).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-950">
+                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950 flex gap-2">
                     <button
-                      className="text-green-600 hover:text-indigo-300 mr-2"
+                      className="text-green-600 hover:text-indigo-300"
                       onClick={() =>
                         toggleDeliveryStatus(order._id, order.deliveryStatus)
                       }
@@ -177,14 +178,14 @@ const OrdersTable = () => {
                       <AiOutlineSend size={18} />
                     </button>
                     <button
-                      className="text-yellow-700 hover:text-indigo-300 mr-2"
+                      className="text-yellow-700 hover:text-indigo-300"
                       onClick={() =>
                         toggleDeliveryStatus(order._id, order.deliveryStatus)
                       }
                     >
                       <AiOutlineHourglass size={18} />
                     </button>
-                    <button className="text-red-400 hover:text-indigo-300 mr-2">
+                    <button className="text-red-400 hover:text-indigo-300">
                       <AiOutlineCloseCircle size={18} />
                     </button>
                   </td>
@@ -201,7 +202,7 @@ const OrdersTable = () => {
         </table>
       </div>
 
-      <div className="flex justify-between mt-4">
+      <div className="flex flex-col sm:flex-row justify-between mt-4 space-y-2 sm:space-y-0">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -209,7 +210,7 @@ const OrdersTable = () => {
         >
           قبلی
         </button>
-        <span>
+        <span className="text-center sm:text-left">
           صفحه {currentPage} از {totalPages}
         </span>
         <button
