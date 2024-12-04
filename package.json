@@ -14,6 +14,7 @@
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.7",
     "framer-motion": "^11.11.17",
+    "jalali-moment": "^3.3.11",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.461.0",
     "mongodb": "^6.11.0",

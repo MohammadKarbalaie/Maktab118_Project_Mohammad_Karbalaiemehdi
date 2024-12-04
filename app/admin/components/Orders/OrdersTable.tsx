@@ -6,6 +6,7 @@ import {
   AiOutlineHourglass,
   AiOutlineSend,
 } from "react-icons/ai";
+import moment from "jalali-moment";
 import { getorders } from "@/app/adminserver/services/orders-services";
 import { urls } from "@/app/adminserver/urls";
 import apiClient from "@/app/adminserver/server";
@@ -166,7 +167,9 @@ const OrdersTable = () => {
                     </span>
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950">
-                    {new Date(order.deliveryDate).toLocaleDateString()}
+                    {moment(order.deliveryDate)
+                      .locale("fa") // تنظیم برای نمایش شمسی
+                      .format("YYYY/MM/DD")} 
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950 flex gap-2">
                     <button
