@@ -1,5 +1,6 @@
 import axios from "axios";
-import { getAccessToken, getRefreshToken } from "./lib/tokenManager";
+import { getValidAccessToken, getRefreshToken } from "./lib/tokenManager";
+
 const apiClient = axios.create({
   baseURL: "http://localhost:8000/api",
   headers: {
@@ -8,11 +9,11 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(
-  (config) => {
-    const accessToken = getAccessToken();
-    const refreshToken = getRefreshToken();
+  async (config) => {
+    const accessToken = await getValidAccessToken(); 
+    const refreshToken = getRefreshToken();  
 
-    console.log("Access Token in Request Header:", accessToken);
+    console.log("Access Token in Request Header:", accessToken); 
     console.log("Refresh Token in Request Header:", refreshToken);
 
     if (accessToken) {

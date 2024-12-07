@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
-import UsersPage from '../components/Users/UserLayout'
-import Sidebar  from '../components/Sidebar'
+import UsersPage from '../../components/Users/UserLayout'
+import Sidebar  from '../../components/Sidebar'
 
 
 function Page() {

@@ -8,23 +8,32 @@ import {
 } from "react-icons/ai";
 import moment from "jalali-moment";
 import { getorders } from "@/app/adminserver/services/orders-services";
+import { getUsers } from "@/app/adminserver/services/user-services";  // اضافه کردن import
 import { urls } from "@/app/adminserver/urls";
 import apiClient from "@/app/adminserver/server";
-
-interface Order {
-  _id: string;
-  user: string;
-  totalPrice: number;
-  deliveryDate: string;
-  deliveryStatus: boolean;
-}
+import {User} from "@/app/adminserver/type/User";
+import {Order} from "@/app/adminserver/type/Orders";
 
 const OrdersTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [users, setUsers] = useState<User[]>([]); 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await getUsers();
+        setUsers(response);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -84,6 +93,11 @@ const OrdersTable = () => {
     } catch (error) {
       console.error("Error updating delivery status:", error);
     }
+  };
+
+  const getUserNameById = (userId: string) => {
+    const user = users.find((user) => user._id === userId);
+    return user ? `${user.firstname} ${user.lastname}` : "نامشخص";
   };
 
   return (
@@ -150,7 +164,7 @@ const OrdersTable = () => {
                     {order._id}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
-                    {order.user}
+                    {getUserNameById(order.user)} {/* نمایش نام مشتری */}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
                     ${order.totalPrice.toLocaleString()}
@@ -169,7 +183,7 @@ const OrdersTable = () => {
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950">
                     {moment(order.deliveryDate)
                       .locale("fa") // تنظیم برای نمایش شمسی
-                      .format("YYYY/MM/DD")} 
+                      .format("YYYY/MM/DD")}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950 flex gap-2">
                     <button

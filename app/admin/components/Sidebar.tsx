@@ -11,10 +11,10 @@ const SIDEBAR_ITEMS = [
 		color: "#6366f1",
 		href: "/admin/dashboard",
 	},
-	{ name: "محصولات", icon: ShoppingBag, color: "#8B5CF6", href: "/admin/products" },
-	{ name: "کاربران", icon: Users, color: "#EC4899", href: "/admin/users" },
-	{ name: "دسته بندی ها", icon: Group, color: "#10B981", href: "/admin/categories" },
-	{ name: "سفارشات", icon: ShoppingCart, color: "#F59E0B", href: "/admin/orders" },
+	{ name: "محصولات", icon: ShoppingBag, color: "#8B5CF6", href: "/admin/dashboard/products" },
+	{ name: "کاربران", icon: Users, color: "#EC4899", href: "/admin/dashboard/users" },
+	{ name: "دسته بندی ها", icon: Group, color: "#10B981", href: "/admin/dashboard/categories" },
+	{ name: "سفارشات", icon: ShoppingCart, color: "#F59E0B", href: "/admin/dashboard/orders" },
 ];
 
 const Sidebar = () => {

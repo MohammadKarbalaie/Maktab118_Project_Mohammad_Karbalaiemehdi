@@ -75,3 +75,5 @@ const AddProductModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 };
 
 export default AddProductModal;
+
+

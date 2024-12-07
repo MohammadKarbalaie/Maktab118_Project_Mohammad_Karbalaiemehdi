@@ -1,6 +1,7 @@
 export const urls ={
     auth:{
         login: "/auth/login", 
+        generateToken: '/auth/token',
     },
     products: "/products",
     categories: "/categories",

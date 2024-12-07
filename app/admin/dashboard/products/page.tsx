@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import ProductsTable from "../components/Product/Producttable";
+import Sidebar from "../../components/Sidebar";
+import ProductsTable from "../../components/Product/Producttable";
 
 function Page() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -12,7 +12,7 @@ function Page() {
 
   return (
     <div className="w-full min-h-screen flex flex-col lg:flex-row gap-4 bg-gray-50">
-      <div className="hidden lg:block lg:w-1/4 bg-white shadow-lg">
+      <div className="hidden xl:w-1/6 lg:block lg:w-3/12 bg-white shadow-lg">
         <Sidebar />
       </div>
 
@@ -39,7 +39,7 @@ function Page() {
         <Sidebar />
       </div>
 
-      <div className="flex-1 xl:ml-20 p-4 lg:ml-0 ">
+      <div className="flex-1 p-4 lg:ml-0">
         <ProductsTable />
       </div>
     </div>

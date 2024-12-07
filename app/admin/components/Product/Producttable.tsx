@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { Edit, Search, Trash2 } from "lucide-react";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import Header from "../Header";
 import { getAllProductsReq } from "../../../adminserver/services/products-services";
+import { Category } from "../../../adminserver/type/Category";
+import { getSubCategories } from "../../../adminserver/services/subcategory-services";
+import { getCategories } from "../../../adminserver/services/category-services";
 import { Product } from "./types";
 import NewProductForm from "./ProductForm";
 import { GrPrevious, GrNext } from "react-icons/gr";
@@ -11,6 +14,8 @@ const ProductsTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subCategories, setSubCategories] = useState<Category[]>([]);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -26,8 +31,50 @@ const ProductsTable: React.FC = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await getCategories();
+      if (response && response.data && Array.isArray(response.data.categories)) {
+        setCategories(response.data.categories);
+      } else {
+        console.error("Categories data is not in the expected format:", response);
+        setCategories([]);
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setCategories([]); 
+    }
+  };
+
+  const fetchSubCategories = async () => {
+    try {
+      const response = await getSubCategories();
+      if (response && Array.isArray(response)) {
+        setSubCategories(response);
+      } else {
+        console.error("Subcategories data is not in the expected format:", response);
+        setSubCategories([]); 
+      }
+    } catch (error) {
+      console.error("Error fetching subcategories:", error);
+      setSubCategories([]); 
+    }
+  };
+
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find((cat) => cat._id === categoryId);
+    return category ? category.name : "نامشخص";
+  };
+
+  const getSubCategoryName = (subCategoryId: string) => {
+    const subCategory = subCategories.find((sub) => sub._id === subCategoryId);
+    return subCategory ? subCategory.name : "نامشخص";
+  };
+
   useEffect(() => {
     fetchProducts(page);
+    fetchCategories();
+    fetchSubCategories();
   }, [page]);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -35,7 +82,9 @@ const ProductsTable: React.FC = () => {
     setSearchTerm(term);
     const filtered = products.filter(
       (product) =>
-        product.name.toLowerCase().includes(term) || product.category.includes(term)
+        product.name.toLowerCase().includes(term) ||
+        getCategoryName(product.category).toLowerCase().includes(term) ||
+        getSubCategoryName(product.subcategory).toLowerCase().includes(term)
     );
     setFilteredProducts(filtered);
   };
@@ -61,7 +110,6 @@ const ProductsTable: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-       
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-100">
             لیست محصولات
@@ -90,31 +138,31 @@ const ProductsTable: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-300 text-sm">
+          <table className="table-auto min-w-full divide-y divide-gray-300 text-sm">
             <thead>
               <tr>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
+                  تصویر محصول
+                </th>
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   نام محصول
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   دسته بندی
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   زیر دسته بندی
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
-                  قیمت
-                </th>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   تعداد
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
-                  برند
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
+                  قیمت
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   توضیحات
                 </th>
-                <th className="px-2 sm:px-6 py-3 text-start font-medium text-white uppercase tracking-wider">
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   اقدامات
                 </th>
               </tr>
@@ -127,33 +175,32 @@ const ProductsTable: React.FC = () => {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <td className="flex items-center gap-2 px-2 sm:px-6 py-4 whitespace-nowrap text-gray-100">
-                    <img
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-100">
+                   <img
                       src={`http://localhost:8000/images/products/images/${product.images[0]}`}
                       alt="Product img"
                       className="w-12 h-8 rounded"
-                    />
-                    <div className="truncate">{product.name}</div>
+                      /> 
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-300">
-                    {product.category}
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-100">
+                    {product.name}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-300">
-                    {product.subcategory}
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300">
+                    {getCategoryName(product.category)}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-300">
-                    {Number(product.price).toLocaleString()} تومان
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300">
+                    {getSubCategoryName(product.subcategory)}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-300">
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300">
                     {product.quantity}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-300">
-                    {product.brand}
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300">
+                    {Number(product.price).toLocaleString()} تومان
                   </td>
-                  <td className="px-2 sm:px-6  text-gray-300 line-clamp-1">
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300 max-w-xs overflow-hidden text-ellipsis">
                     {product.description}
                   </td>
-                  <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-gray-300 flex gap-2">
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300 flex gap-2">
                     <button className="text-indigo-500 hover:text-indigo-300">
                       <Edit size={18} />
                     </button>
@@ -167,7 +214,7 @@ const ProductsTable: React.FC = () => {
           </table>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
+        <div className="flex justify-between items-center gap-4 pt-4">
           <button
             onClick={handlePrevious}
             disabled={page === 1}

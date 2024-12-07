@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
-import Sidebar  from '../components/Sidebar'
-import OrdersPage from '../components/Orders/Orders';
+import Sidebar  from '../../components/Sidebar'
+import CategoryPage from '../../components/Category/CategoryTable';
 
 
 function Page() {
@@ -31,7 +31,7 @@ function Page() {
       </div>
 
       <div className="w-full 2xl:w-full 2xl:-mr-[125px] xl:-mr-[20px] lg:-mr-[30px] md:mr-0 sm:mr-0 xl:w-full lg:w-4/4 px-2 xl:px-0 lg:px-0 md:px-0">
-        <OrdersPage />
+        <CategoryPage />
       </div>
     </div>
   );

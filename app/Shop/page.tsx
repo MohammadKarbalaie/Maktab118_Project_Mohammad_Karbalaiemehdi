@@ -11,13 +11,15 @@ function HomeShop() {
       <Header />
       <div className="min-h-screen">
         <Hero />
-        <div className="my-20 py-8 mx-40 border rounded-lg bg-gray-50">
+        <div className="my-10 py-8 px-4 sm:px-8 lg:mx-40 border rounded-lg bg-gray-50">
           <MultiSlideCarousel />
         </div>
-        <main className="mx-[450px] my-8 flex flex-col items-center">
-            <h1 className="text-3xl font-bold mt-5 mb-6">دوچرخه‌های محبوب</h1>
-            <BikeCarousel />
-          </main>
+        <main className="mx-4 sm:mx-auto lg:mx-[450px] my-8 flex flex-col items-center">
+          <h1 className="text-2xl sm:text-3xl font-bold mt-5 mb-6">
+            دوچرخه‌های محبوب
+          </h1>
+          <BikeCarousel />
+        </main>
       </div>
       <Footer />
     </div>
