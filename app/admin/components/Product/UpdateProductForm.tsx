@@ -2,27 +2,44 @@ import { IAddProduct } from "./types";
 import { IProduct } from "./types";
 import { urls } from "../../../adminserver/urls"; 
 import apiClient from "../../../adminserver/server"; 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+export const getCategories = async () => {
+  try {
+    const response = await apiClient.get(urls.categories); 
+    return response.data.data.categories;
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+    throw error; 
+  }
+};
+
+export const getSubCategories = async () => {
+  try {
+    const response = await apiClient.get(urls.subcategories);
+    return response.data.data.subcategories;
+  } catch (error) {
+    console.error("Failed to fetch subcategories:", error);
+    throw error;
+  }
+};
 
 export const fetchEditProducts = async (id: string, data: IAddProduct) => {
   try {
     const formData = new FormData();
     
-    // اضافه کردن داده‌های متنی به FormData
     formData.append("name", data.name);
     formData.append("brand", data.brand);
     formData.append("description", data.description);
     formData.append("subcategory", data.subcategory);
     formData.append("category", data.category);
 
-    // اضافه کردن تصاویر به FormData
     data.images.forEach((image, index) => {
-      formData.append("images", image); // تغییر اینجا به "images" (اگر انتظار دارید که سرور آن را به‌صورت آرایه‌ای از فایل‌ها دریافت کند)
+      formData.append("images", image);
     });
 
-    // ارسال درخواست PATCH
     const response = await apiClient.patch(urls.productsid(id), formData, {
-      headers: { "Content-Type": "multipart/form-data" } // افزودن هدر مناسب برای ارسال فایل‌ها
+      headers: { "Content-Type": "multipart/form-data" } 
     });
     
     return response.data;
@@ -49,12 +66,30 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
   const [brand, setBrand] = useState(product.brand);
   const [subcategory, setSubCategory] = useState(product.subcategory);
   const [description, setDescription] = useState(product.description);
-  const [images, setImages] = useState<File[]>([]); // ذخیره فایل‌های انتخاب شده
+  const [images, setImages] = useState<File[]>([]); 
 
-  // مدیریت تغییرات ورودی فایل‌ها
+  const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadCategoriesAndSubCategories = async () => {
+      try {
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
+        
+        const subcategoriesData = await getSubCategories();
+        setSubCategories(subcategoriesData);
+      } catch (error) {
+        console.error("Error fetching categories and subcategories:", error);
+      }
+    };
+
+    loadCategoriesAndSubCategories();
+  }, []);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setImages(Array.from(e.target.files)); // تبدیل فایل‌ها به آرایه
+      setImages(Array.from(e.target.files));
     }
   };
 
@@ -90,20 +125,35 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
             placeholder="Product Name"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
-          <input
-            type="text"
+          
+          <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="Category"
             className="p-2 bg-gray-700 text-white rounded-lg"
-          />
-          <input
-            type="text"
+          >
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category._id} value={category._id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          <select
             value={subcategory}
             onChange={(e) => setSubCategory(e.target.value)}
-            placeholder="Subcategory"
             className="p-2 bg-gray-700 text-white rounded-lg"
-          />
+          >
+            <option value="">Select Subcategory</option>
+            {subcategories
+              .filter((subcat) => subcat.category === category) 
+              .map((subcategory) => (
+                <option key={subcategory._id} value={subcategory._id}>
+                  {subcategory.name}
+                </option>
+              ))}
+          </select>
+
           <input
             type="text"
             value={brand}
@@ -111,6 +161,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
             placeholder="Brand"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
+          
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -118,7 +169,6 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
           
-          {/* ورودی فایل‌ها */}
           <input
             type="file"
             multiple
@@ -126,6 +176,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
         </form>
+        
         <div className="flex gap-6 mt-4 justify-center">
           <button
             className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
