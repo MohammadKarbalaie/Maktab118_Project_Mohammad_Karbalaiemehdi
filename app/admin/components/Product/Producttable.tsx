@@ -6,17 +6,21 @@ import { getAllProductsReq } from "../../../adminserver/services/products-servic
 import { Category } from "../../../adminserver/type/Category";
 import { getSubCategories } from "../../../adminserver/services/subcategory-services";
 import { getCategories } from "../../../adminserver/services/category-services";
-import { Product } from "./types";
-import NewProductForm from "./ProductForm";
+import { IProduct } from "./types";
+import AddProductModal from "./ProductForm";  // به روز رسانی مسیر
+import EditProductModal from "./UpdateProductForm"; // به روز رسانی مسیر
 import { GrPrevious, GrNext } from "react-icons/gr";
+import { DelProduct } from "../../../adminserver/services/products-services";  // سرویس حذف محصول
 
 const ProductsTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<Category[]>([]);
-  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showForm, setShowForm] = useState<boolean>(false); // نمایش فرم ویرایش
+  const [showForm1, setShowForm1] = useState<boolean>(false); // نمایش فرم افزودن محصول
+  const [productToEdit, setProductToEdit] = useState<IProduct | null>(null); // محصولی که قرار است ویرایش شود
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -38,7 +42,7 @@ const ProductsTable: React.FC = () => {
         setCategories(response.data.categories);
       } else {
         console.error("Categories data is not in the expected format:", response);
-        setCategories([]);
+        setCategories([]); 
       }
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -101,6 +105,24 @@ const ProductsTable: React.FC = () => {
     }
   };
 
+  // تابع برای حذف محصول
+  const handleDeleteProduct = async (id: string) => {
+    await DelProduct(id);
+    fetchProducts(page);  // بازخوانی محصولات بعد از حذف
+  };
+
+  // تابع برای افزودن محصول
+  const handleAddProduct = () => {
+    setProductToEdit(null); // محصول جدید برای اضافه کردن
+    setShowForm1(true); // نمایش مودال افزودن محصول
+  };
+
+  // تابع برای ویرایش محصول
+  const handleEditProduct = (product: IProduct) => {
+    setProductToEdit(product);  // قرار دادن محصول برای ویرایش
+    setShowForm(true);  // نمایش مودال ویرایش
+  };
+
   return (
     <div className="flex-1 -mt-6 overflow-auto relative z-10 px-4 sm:px-6 lg:px-8">
       <Header title="محصولات" />
@@ -117,7 +139,7 @@ const ProductsTable: React.FC = () => {
           <div className="xl:flex xl:gap-4 relative w-full sm:w-auto">
             <button
               className="w-full sm:w-auto px-4 py-2 bg-gray-100 text-black rounded-xl hover:bg-indigo-800 hover:text-gray-100 transition duration-200"
-              onClick={() => setShowForm(true)}
+              onClick={handleAddProduct}  // فراخوانی برای افزودن محصول جدید
             >
               ایجاد محصول جدید
             </button>
@@ -154,12 +176,6 @@ const ProductsTable: React.FC = () => {
                   زیر دسته بندی
                 </th>
                 <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
-                  تعداد
-                </th>
-                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
-                  قیمت
-                </th>
-                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   توضیحات
                 </th>
                 <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
@@ -176,11 +192,13 @@ const ProductsTable: React.FC = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <td className="px-4 py-2 whitespace-nowrap text-gray-100">
-                   <img
+                    <img
                       src={`http://localhost:8000/images/products/images/${product.images[0]}`}
                       alt="Product img"
-                      className="w-12 h-8 rounded"
-                      /> 
+                      width={50}  // عرض تصویر
+                      height={80}  // ارتفاع تصویر
+                      className="rounded"
+                    />
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-gray-100">
                     {product.name}
@@ -191,20 +209,20 @@ const ProductsTable: React.FC = () => {
                   <td className="px-4 py-2 whitespace-nowrap text-gray-300">
                     {getSubCategoryName(product.subcategory)}
                   </td>
-                  <td className="px-4 py-2 whitespace-nowrap text-gray-300">
-                    {product.quantity}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap text-gray-300">
-                    {Number(product.price).toLocaleString()} تومان
-                  </td>
                   <td className="px-4 py-2 whitespace-nowrap text-gray-300 max-w-xs overflow-hidden text-ellipsis">
                     {product.description}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-gray-300 flex gap-2">
-                    <button className="text-indigo-500 hover:text-indigo-300">
+                    <button 
+                      className="text-indigo-500 hover:text-indigo-300" 
+                      onClick={() => handleEditProduct(product)}
+                    >
                       <Edit size={18} />
                     </button>
-                    <button className="text-red-500 hover:text-red-300">
+                    <button
+                      className="text-red-500 hover:text-red-300"
+                      onClick={() => handleDeleteProduct(product._id)}
+                    >
                       <Trash2 size={18} />
                     </button>
                   </td>
@@ -241,7 +259,19 @@ const ProductsTable: React.FC = () => {
         </div>
       </motion.div>
 
-      {showForm && <NewProductForm onClose={() => setShowForm(false)} />}
+      {showForm1 && <AddProductModal onClose={() => setShowForm1(false)} />}
+      
+      {showForm && productToEdit && (
+        <EditProductModal
+          onClose={() => setShowForm(false)}
+          product={productToEdit}
+          onSave={async (updatedProduct: IProduct) => {
+            console.log(updatedProduct); 
+            fetchProducts(page);  // بارگذاری مجدد محصولات
+            setShowForm(false);   // بستن مودال
+          }}
+        />
+      )}
     </div>
   );
 };

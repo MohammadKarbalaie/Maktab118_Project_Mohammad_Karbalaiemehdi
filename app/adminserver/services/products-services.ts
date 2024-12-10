@@ -2,31 +2,7 @@ import  apiClient  from '../server';
 import { urls } from '../urls';
 import axios from 'axios';
 import { getAccessToken } from '../lib/tokenManager';
-
-export interface Product {
-  _id:string
-  name: string;
-  category: string;
-  subcategory: string;
-  price: string;
-  quantity: string;
-  brand: string;
-  description: string;
-  thumbnail: File | string | null; 
-  images: File[];
-}
-
-export interface ProductData {
-  category: string;
-  subcategory: string;
-  name: string;
-  price: number;
-  quantity: number;
-  brand: string;
-  description: string;
-  images: File[];
-}
-
+import { GetProductsResponse, IAddProduct, IProductById, Product, ProductData } from '../type/Product';
 export async function addProduct(data: ProductData) {
   const token = getAccessToken();   
 
@@ -49,15 +25,7 @@ export async function addProduct(data: ProductData) {
 }
 
 
-interface GetProductsResponse {
-  page: number;
-  per_page: number;
-  total: number;
-  total_pages: number;
-  data: {
-    products: Product[];
-  };
-}
+
 
 export const getAllProductsReq = async (
   page: number,
@@ -84,3 +52,45 @@ export const getAllProductsReq = async (
     throw error;
   }
 };
+
+type getProductByIdType = (id:string) => Promise<IProductById>
+export const getProductById:getProductByIdType = async(id) => {
+try {
+const response = await apiClient.get(urls.productsid(id));
+console.log(response.data);
+
+return response.data
+} catch (error ) {
+console.log(error || "خطا از طرف سرور میباشد.چند دقیقه دیگر دوباره تلاش کنید")
+}
+}
+
+
+export const fetchEditProducts = async (id: string, data: IAddProduct) => {
+  try {
+  const formData = new FormData();
+  formData.append("name", data.name);
+  formData.append("brand", data.brand);
+  formData.append("description", data.description);
+  // formData.append("quantity", data.quantity.toString());
+  formData.append("images", data.images[0]);
+  formData.append("subcategory", data.subcategory);
+  formData.append("category", data.category);
+  // formData.append("price", data.price.toString());
+  const response = await apiClient.patch(urls.productsid(id), formData);
+  return response.data;
+  } catch (error) {
+  throw error;
+  }
+  };
+  
+
+
+export const DelProduct = async (id:string) =>{
+  try {
+    const response = await apiClient.delete(urls.productsid(id));
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error deleting product:', error);
+  }
+}
