@@ -15,7 +15,7 @@ function Footer() {
             <span className="self-center text-2xl font-semibold">
             <img
             className="h-20"
-            src="./Logo1.png"
+            src="../Logo1.png"
             width="100"
             alt="Logo"
           />

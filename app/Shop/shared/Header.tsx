@@ -1,10 +1,28 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState } from "react";
+import Link from "next/link";
+import React, { useState, useEffect } from "react";
 import { BiBasket, BiMenu, BiSearch, BiUser } from "react-icons/bi";
+import apiClient from "@/app/adminserver/server"; // فرض می‌کنیم apiClient برای گرفتن داده‌ها از API است
+import { urls } from "@/app/adminserver/urls";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  // دریافت دسته‌بندی‌ها از API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await apiClient.get(urls.categories);
+        setCategories(res.data.data.categories); // فرض می‌کنیم داده‌ها در res.data.data.categories قرار دارند
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <header className="bg-white shadow-sm">
@@ -19,7 +37,7 @@ function Header() {
         <div className="flex-shrink-0 order-2 lg:order-1 mx-auto lg:mx-0">
           <img
             className="h-20 cursor-pointer"
-            src="./Logo1.png"
+            src="../Logo1.png"
             width="100"
             alt="Logo"
           />
@@ -53,7 +71,7 @@ function Header() {
 
           <a href="#" className="relative">
             <div className="absolute -top-2 -right-2  bg-yellow-400 text-xs font-bold px-1 py-0.5 rounded-full">
-              12
+              6
             </div>
             <BiBasket className="text-2xl md:text-3xl text-gray-600" />
           </a>
@@ -109,13 +127,22 @@ function Header() {
         <div className="container mx-auto flex justify-between items-center px-4 lg:px-0">
           <ul className="flex gap-4">
             <li className="hover:bg-gray-300 px-4 py-2 rounded-3xl transition duration-200 hover:text-gray-700 cursor-pointer">
-              صفحه اصلی
+              <Link href={"/Shop"}>صفحه اصلی</Link>
             </li>
-            <li className="hover:bg-gray-300 px-4 py-2 rounded-3xl transition duration-200 hover:text-gray-700 cursor-pointer">
+            <li className="relative group hover:bg-gray-300 px-4 py-2 rounded-3xl transition duration-200 hover:text-gray-700 cursor-pointer">
               دسته بندی ها
+              <ul className="absolute left-0 hidden z-50 group-hover:block bg-white shadow-md rounded-md mt-2 px-4 py-2 w-48">
+                {categories.map((category) => (
+                  <li key={category._id} className="py-2">
+                    <Link href={`/Shop/category/${category.slugname}`}>
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </li>
             <li className="hover:bg-gray-300 px-4 py-2 rounded-3xl transition duration-200 hover:text-gray-700 cursor-pointer">
-              محصولات
+              <Link href={"/Shop/product"}>محصولات</Link>
             </li>
             <li className="hover:bg-gray-300 px-4 py-2 rounded-3xl transition duration-200 hover:text-gray-700 cursor-pointer">
               درباره ما
