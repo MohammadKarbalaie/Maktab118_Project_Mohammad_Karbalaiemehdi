@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { motion } from "framer-motion";
 import { Edit, Search, Trash2 } from "lucide-react";
 import { useState, useEffect, ChangeEvent } from "react";

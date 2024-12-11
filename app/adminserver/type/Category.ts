@@ -1,6 +1,7 @@
 export interface Category {
     _id:string;
     name: string; 
+    slugname:string;
   }
 
   export interface Subcategory {

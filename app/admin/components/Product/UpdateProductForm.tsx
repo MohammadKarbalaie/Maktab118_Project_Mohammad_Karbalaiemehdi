@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IAddProduct } from "./types";
 import { IProduct } from "./types";
 import { urls } from "../../../adminserver/urls"; 

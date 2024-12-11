@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { BiBasket } from "react-icons/bi";
 import { getProductById } from "../../../adminserver/services/products-services";
-import { IProductById } from "../../../adminserver/services/products-services";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { IProductById } from "@/app/adminserver/type/Product";
 
 export default function ProductDetailsPage() {
   const [product, setProduct] = useState<

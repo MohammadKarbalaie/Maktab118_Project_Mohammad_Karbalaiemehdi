@@ -5,10 +5,11 @@ import React, { useState, useEffect } from "react";
 import { BiBasket, BiMenu, BiSearch, BiUser } from "react-icons/bi";
 import apiClient from "@/app/adminserver/server"; // فرض می‌کنیم apiClient برای گرفتن داده‌ها از API است
 import { urls } from "@/app/adminserver/urls";
+import { Category } from "@/app/adminserver/type/Category";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   // دریافت دسته‌بندی‌ها از API
   useEffect(() => {
@@ -37,7 +38,7 @@ function Header() {
         <div className="flex-shrink-0 order-2 lg:order-1 mx-auto lg:mx-0">
           <img
             className="h-20 cursor-pointer"
-            src="../Logo1.png"
+            src="/Logo1.png"
             width="100"
             alt="Logo"
           />
@@ -65,8 +66,8 @@ function Header() {
         </div>
 
         <nav className="gap-8 items-center xl:mr-40 lg:mr-20 lg:flex ml-auto order-3 justify-center">
-          <a href="#" className="relative">
-            <BiUser className="text-2xl md:text-3xl hidden lg:flex text-gray-600" />
+          <a href="/Shop/auth/login" className="relative">
+            <BiUser className="text-2xl md:text-3xl hover:text-black hover:scale-125 transition duration-200 hidden lg:flex text-gray-600" />
           </a>
 
           <a href="#" className="relative">
