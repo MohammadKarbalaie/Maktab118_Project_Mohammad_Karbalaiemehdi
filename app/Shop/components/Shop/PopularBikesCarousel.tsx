@@ -12,21 +12,21 @@ interface Bike {
 const bikes: Bike[] = [  
   {  
     id: 1,  
-    name: "دوچرخه ۱",  
+    name: "دوچرخه اورلرد مدل Converse 1.0 V",  
     image: "./1.png",        
-    description: "توضیحات درباره دوچرخه ۱.",  
+    description: "طراحی حرفه ای بدنه و بهره گیری",  
   },  
   {  
     id: 2,  
-    name: "دوچرخه ۲",  
+    name: "دوچرخه ترینکس مدل (۲۰۲۳)",  
     image: "./2.png",  
-    description: "توضیحات درباره دوچرخه ۲.",  
+    description: "دوچرخه ترینکس از جنس آلومینیوم است",  
   },  
   {  
     id: 3,  
-    name: "دوچرخه ۳",  
+    name: "دوچرخه ترینکس مدل (۲۰۲۳) Trinx M1000 Elite",  
     image: "./3.png",  
-    description: "توضیحات درباره دوچرخه ۳.",  
+    description: "دوچرخه ترینکس مدل (2022) Trinx M1000 Elite سایز 27.5، از جمله محصولات TRINX است",  
   },  
 ];  
 
@@ -44,12 +44,12 @@ const BikeCarousel: React.FC = () => {
   };  
 
   return (  
-    <div className="relative w-full overflow-hidden border">  
+    <div className="relative w-[1440px] overflow-hidden border">  
       <div className="relative w-full h-[460px]">  
         {bikes.map((bike, index) => (  
           <div  
             key={bike.id}  
-            className={`absolute transition-opacity px-44 duration-500 ${  
+            className={`absolute transition-opacity mx-auto px-44 duration-500 ${  
               index === currentIndex ? "opacity-100" : "opacity-0"  
             }`}  
             style={{ width: "100%", height: "100%" }}  
@@ -57,9 +57,9 @@ const BikeCarousel: React.FC = () => {
             <img  
               src={bike.image}  
               alt={bike.name}  
-              className="object-cover"  
+              className="object-cover mx-auto"  
             />  
-            <div className="absolute bottom-0 left-0 bg-gray-400 bg-opacity-50 text-white p-4 w-full">  
+            <div className="absolute bottom-0 left-0 bg-gray-500 bg-opacity-50 text-white p-4 w-full">  
               <h5 className="text-lg">{bike.name}</h5>  
               <p>{bike.description}</p>  
             </div>  

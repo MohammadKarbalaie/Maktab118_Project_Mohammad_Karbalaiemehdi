@@ -4,6 +4,7 @@ import { IProduct } from "./types";
 import { urls } from "../../../adminserver/urls"; 
 import apiClient from "../../../adminserver/server"; 
 import { useState, useEffect } from "react";
+import CustomUpload from "../Upload";
 
 export const getCategories = async () => {
   try {
@@ -170,12 +171,10 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
           
-          <input
-            type="file"
-            multiple
-            onChange={handleImageChange}
-            className="p-2 bg-gray-700 text-white rounded-lg"
-          />
+          <CustomUpload multiple={true} onChange={handleImageChange} />
+          
+          
+
         </form>
         
         <div className="flex gap-6 mt-4 justify-center">
@@ -183,13 +182,13 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
             className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
             onClick={handleSave}
           >
-            Save
+            ویرایش
           </button>
           <button
             className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
             onClick={onClose}
           >
-            Close
+            بستن
           </button>
         </div>
       </div>

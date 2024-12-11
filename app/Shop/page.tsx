@@ -4,6 +4,7 @@ import Footer from "./shared/Footer";
 import Hero from "./components/Shop/Hero";
 import MultiSlideCarousel from "./components/Shop/MultiSlideCarousel";
 import BikeCarousel from "./components/Shop/PopularBikesCarousel";
+import BikeTestimonials from "./components/Shop/BikeTestimonials";
 
 function HomeShop() {
   return (
@@ -20,6 +21,9 @@ function HomeShop() {
           </h1>
           <BikeCarousel />
         </main>
+        <div>
+        <BikeTestimonials />
+        </div>
       </div>
       <Footer />
     </div>

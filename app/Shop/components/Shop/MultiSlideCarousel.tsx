@@ -15,27 +15,27 @@ const products: Product[] = [
   {
     id: 1,
     name: "Mountain Bike",
-    image: "https://via.placeholder.com/300x200?text=Mountain+Bike",
+    image: "/assets/Mountain+Bike.png",
   },
   {
     id: 2,
     name: "Road Bike",
-    image: "https://via.placeholder.com/300x200?text=Road+Bike",
+    image: "/assets/Road Bike.png",
   },
   {
     id: 3,
     name: "Hybrid Bike",
-    image: "https://via.placeholder.com/300x200?text=Hybrid+Bike",
+    image: "/assets/Hybrid Bike.png",
   },
   {
     id: 4,
     name: "Electric Bike",
-    image: "https://via.placeholder.com/300x200?text=Electric+Bike",
+    image: "/assets/Electric Bike.png",
   },
   {
     id: 5,
     name: "Kids Bike",
-    image: "https://via.placeholder.com/300x200?text=Kids+Bike",
+    image: "/assets/KidsBike.png",
   },
 ];
 
@@ -54,7 +54,7 @@ const MultiSlideCarousel = () => {
             spaceBetween: 30,
           },
           1028: {
-            slidesPerView: 2,
+            slidesPerView: 4,
             spaceBetween: 30,
           },
           990: {
@@ -70,7 +70,7 @@ const MultiSlideCarousel = () => {
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-64 object-cover rounded-lg shadow-md"
+                className="w-full h-60 object-cover rounded-lg shadow-md"
               />
               <h3 className="mt-4 text-lg font-semibold">{product.name}</h3>
             </div>
