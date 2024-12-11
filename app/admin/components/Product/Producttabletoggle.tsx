@@ -11,12 +11,8 @@ const ProductsTableToggle: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // State to track which field is being edited (either "quantity" or "price")
-  const [editingField, setEditingField] = useState<"quantity" | "price" | null>(null);
-  const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState<string>("");
+  const [editingFields, setEditingFields] = useState<Record<string, Set<"quantity" | "price">>>({});
 
-  // Fetch products from the API
   const fetchProducts = async (currentPage: number) => {
     try {
       const response = await getAllProductsReq(currentPage, 6);
@@ -45,51 +41,55 @@ const ProductsTableToggle: React.FC = () => {
     fetchProducts(page);
   }, [page]);
 
-  // Handle double click to start editing
-  const handleDoubleClick = (field: "quantity" | "price", productId: string, currentValue: string | number) => {
-    setEditingField(field);
-    setEditingProductId(productId);
-    setEditingValue(currentValue.toString());
+  // Handle double click to enable editing
+  const handleDoubleClick = (productId: string, field: "quantity" | "price") => {
+    setEditingFields((prev) => {
+      const productFields = prev[productId] || new Set();
+      productFields.add(field);
+      return { ...prev, [productId]: productFields };
+    });
   };
 
-  // Save changes to quantity and price
+  // Handle input changes and update displayed values immediately
+  const handleInputChange = (productId: string, field: "quantity" | "price", value: string) => {
+    setFilteredProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product._id === productId ? { ...product, [field]: value } : product
+      )
+    );
+  };
+
+  // Save changes for all edited products
   const handleSaveChanges = async () => {
-    if (editingProductId && editingField && editingValue !== "") {
-      const updatedData = { [editingField]: editingValue };
-      try {
-        const apiUrl = `http://localhost:8000/api/products/${editingProductId}`;
-        const response = await fetch(apiUrl, {
-          method: "PATCH", // Use PATCH instead of PUT
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedData),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update product");
+    const updates = Object.entries(editingFields).map(async ([productId, fields]) => {
+      const updatedFields: Partial<IProduct> = {};
+      fields.forEach((field) => {
+        const product = filteredProducts.find((p) => p._id === productId);
+        if (product) {
+          updatedFields[field] = product[field];
         }
-        const data = await response.json();
-        console.log("Updated Product:", data);
-        // Update the product locally after successful update
-        setFilteredProducts((prevProducts) =>
-          prevProducts.map((product) =>
-            product._id === editingProductId ? { ...product, [editingField]: editingValue } : product
-          )
-        );
-      } catch (error) {
-        console.error("Error sending update request:", error);
-      } finally {
-        // Reset editing state
-        setEditingField(null);
-        setEditingProductId(null);
-        setEditingValue("");
-      }
-    }
-  };
+      });
 
-  // Handle input field changes while editing
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingValue(e.target.value);
+      const apiUrl = `http://localhost:8000/api/products/${productId}`;
+      const response = await fetch(apiUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedFields),
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to update product with ID: ${productId}`);
+      }
+      return response.json();
+    });
+
+    try {
+      await Promise.all(updates);
+      setEditingFields({});
+    } catch (error) {
+      console.error("Error saving changes:", error);
+    }
   };
 
   return (
@@ -126,16 +126,14 @@ const ProductsTableToggle: React.FC = () => {
                   <td className="px-4 py-2 whitespace-nowrap text-gray-100">{product.name}</td>
                   <td
                     className="px-4 py-2 whitespace-nowrap text-gray-300"
-                    onDoubleClick={() => handleDoubleClick("quantity", product._id, product.quantity)}
+                    onDoubleClick={() => handleDoubleClick(product._id, "quantity")}
                   >
-                    {editingField === "quantity" && editingProductId === product._id ? (
+                    {editingFields[product._id]?.has("quantity") ? (
                       <input
                         type="number"
-                        value={editingValue}
-                        onBlur={handleSaveChanges}
-                        onChange={handleInputChange}
+                        value={product.quantity}
+                        onChange={(e) => handleInputChange(product._id, "quantity", e.target.value)}
                         className="bg-gray-800 text-white rounded px-2 py-1 w-20"
-                        autoFocus
                       />
                     ) : (
                       product.quantity
@@ -143,16 +141,14 @@ const ProductsTableToggle: React.FC = () => {
                   </td>
                   <td
                     className="px-4 py-2 whitespace-nowrap text-gray-300"
-                    onDoubleClick={() => handleDoubleClick("price", product._id, product.price)}
+                    onDoubleClick={() => handleDoubleClick(product._id, "price")}
                   >
-                    {editingField === "price" && editingProductId === product._id ? (
+                    {editingFields[product._id]?.has("price") ? (
                       <input
                         type="number"
-                        value={editingValue}
-                        onBlur={handleSaveChanges}
-                        onChange={handleInputChange}
+                        value={product.price}
+                        onChange={(e) => handleInputChange(product._id, "price", e.target.value)}
                         className="bg-gray-800 text-white rounded px-2 py-1 w-20"
-                        autoFocus
                       />
                     ) : (
                       `${Number(product.price).toLocaleString()} تومان`
@@ -181,9 +177,17 @@ const ProductsTableToggle: React.FC = () => {
             disabled={page === totalPages}
             className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded"
           >
-            
             بعدی
             <GrPrevious className="text-lg" />
+          </button>
+        </div>
+
+        <div className="pt-6">
+          <button
+            onClick={handleSaveChanges}
+            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold"
+          >
+            ذخیره تغییرات
           </button>
         </div>
       </div>
