@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllProductsReq } from "../../adminserver/services/products-services";
 import { BiBasket } from "react-icons/bi";
-import { Product } from "../../admin/components/Product/types";
+import { Product } from "../../type/Product";
 import Link from "next/link";
 
 const ProductsSection = () => {

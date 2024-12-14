@@ -1,22 +1,24 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { BiBasket, BiMenu, BiSearch, BiUser } from "react-icons/bi";
-import apiClient from "@/app/adminserver/server"; // فرض می‌کنیم apiClient برای گرفتن داده‌ها از API است
+import apiClient from "@/app/adminserver/server"; 
 import { urls } from "@/app/adminserver/urls";
 import { Category } from "@/app/adminserver/type/Category";
+import Image from "next/image"; 
+import Cart from "../components/Cart/Cart"; 
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [cartItems] = useState<number>(0);
+  const [isCartVisible, setIsCartVisible] = useState<boolean>(false); 
 
-  // دریافت دسته‌بندی‌ها از API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await apiClient.get(urls.categories);
-        setCategories(res.data.data.categories); // فرض می‌کنیم داده‌ها در res.data.data.categories قرار دارند
+        setCategories(res.data.data.categories); 
       } catch (error) {
         console.error("Error fetching categories", error);
       }
@@ -24,6 +26,10 @@ function Header() {
 
     fetchCategories();
   }, []);
+
+  const toggleCartVisibility = () => {
+    setIsCartVisible(!isCartVisible);
+  };
 
   return (
     <header className="bg-white shadow-sm">
@@ -36,11 +42,12 @@ function Header() {
         </button>
 
         <div className="flex-shrink-0 order-2 lg:order-1 mx-auto lg:mx-0">
-          <img
+          <Image
             className="h-20 cursor-pointer"
             src="/Logo1.png"
-            width="100"
             alt="Logo"
+            width={100}
+            height={80} 
           />
         </div>
 
@@ -58,7 +65,7 @@ function Header() {
           <input
             className="border-l border-gray-300 bg-transparent flex-grow font-semibold text-sm px-4 py-2"
             type="text"
-            placeholder="من به دنبال ..."
+            placeholder="من به دنبال ... "
           />
           <button className="p-4">
             <BiSearch className="text-gray-500 text-xl" />
@@ -70,15 +77,16 @@ function Header() {
             <BiUser className="text-2xl md:text-3xl hover:text-black hover:scale-125 transition duration-200 hidden lg:flex text-gray-600" />
           </a>
 
-          <a href="#" className="relative">
-            <div className="absolute -top-2 -right-2  bg-yellow-400 text-xs font-bold px-1 py-0.5 rounded-full">
-              6
+          <a href="#" className="relative" onClick={toggleCartVisibility}>
+            <div className="absolute -top-2 -right-2 bg-yellow-400 text-xs font-bold px-1 py-0.5 rounded-full">
+              {cartItems} 
             </div>
-            <BiBasket className="text-2xl md:text-3xl text-gray-600" />
+            <BiBasket className="text-2xl  hover:text-black hover:scale-125 transition duration-200 md:text-3xl text-gray-600" />
           </a>
         </nav>
       </div>
 
+      {/* منو موبایل */}
       <div
         className={`lg:hidden bg-white shadow-md rounded-md mt-2 px-4 py-2 transition-all duration-300 ${
           isMenuOpen ? "block" : "hidden"
@@ -122,7 +130,12 @@ function Header() {
         </a>
       </div>
 
-      {/* Desktop Menu */}
+      {isCartVisible && (
+        <div className="absolute top-0 right-0 w-1/3 bg-white shadow-lg rounded-lg">
+          <Cart />
+        </div>
+      )}
+
       <hr />
       <nav className="hidden xl:flex lg:flex bg-gray-50 py-3">
         <div className="container mx-auto flex justify-between items-center px-4 lg:px-0">

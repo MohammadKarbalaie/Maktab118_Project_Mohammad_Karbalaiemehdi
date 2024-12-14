@@ -4,14 +4,15 @@ import { Edit, Search, Trash2 } from "lucide-react";
 import { useState, useEffect, ChangeEvent } from "react";
 import Header from "../Header";
 import { getAllProductsReq } from "../../../adminserver/services/products-services";
-import { Category } from "../../../adminserver/type/Category";
+import { Category } from "../../../type/Category";
 import { getSubCategories } from "../../../adminserver/services/subcategory-services";
 import { getCategories } from "../../../adminserver/services/category-services";
-import { IProduct } from "./types";
-import AddProductModal from "./ProductForm";  // به روز رسانی مسیر
-import EditProductModal from "./UpdateProductForm"; // به روز رسانی مسیر
+import { IProduct } from "../../../type/Product";
+import AddProductModal from "./ProductForm";  
+import EditProductModal from "./UpdateProductForm"; 
 import { GrPrevious, GrNext } from "react-icons/gr";
-import { DelProduct } from "../../../adminserver/services/products-services";  // سرویس حذف محصول
+import { DelProduct } from "../../../adminserver/services/products-services"; 
+import DeleteProductModal from "./DeleteProductModal";
 
 const ProductsTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -19,11 +20,13 @@ const ProductsTable: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<Category[]>([]);
-  const [showForm, setShowForm] = useState<boolean>(false); // نمایش فرم ویرایش
-  const [showForm1, setShowForm1] = useState<boolean>(false); // نمایش فرم افزودن محصول
-  const [productToEdit, setProductToEdit] = useState<IProduct | null>(null); // محصولی که قرار است ویرایش شود
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showForm1, setShowForm1] = useState<boolean>(false);
+  const [productToEdit, setProductToEdit] = useState<IProduct | null>(null); 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
 
   const fetchProducts = async (currentPage: number) => {
     try {
@@ -106,23 +109,34 @@ const ProductsTable: React.FC = () => {
     }
   };
 
-  // تابع برای حذف محصول
-  const handleDeleteProduct = async (id: string) => {
-    await DelProduct(id);
-    fetchProducts(page);  // بازخوانی محصولات بعد از حذف
+  const handleDeleteProduct = async () => {
+    if (productToDelete) {
+      await DelProduct(productToDelete); 
+      fetchProducts(page);  
+      setDeleteModalOpen(false);  
+    }
   };
 
-  // تابع برای افزودن محصول
+
+  const openDeleteModal = (id: string) => {
+    setProductToDelete(id); 
+    setDeleteModalOpen(true);  
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);  
+  };
+
   const handleAddProduct = () => {
-    setProductToEdit(null); // محصول جدید برای اضافه کردن
-    setShowForm1(true); // نمایش مودال افزودن محصول
+    setProductToEdit(null);
+    setShowForm1(true); 
   };
 
-  // تابع برای ویرایش محصول
   const handleEditProduct = (product: IProduct) => {
-    setProductToEdit(product);  // قرار دادن محصول برای ویرایش
-    setShowForm(true);  // نمایش مودال ویرایش
+    setProductToEdit(product); 
+    setShowForm(true);
   };
+
 
   return (
     <div className="flex-1 -mt-6 overflow-auto relative z-10 px-4 sm:px-6 lg:px-8">
@@ -140,7 +154,7 @@ const ProductsTable: React.FC = () => {
           <div className="xl:flex xl:gap-4 relative w-full sm:w-auto">
             <button
               className="w-full sm:w-auto px-4 py-2 bg-gray-100 text-black rounded-xl hover:bg-indigo-800 hover:text-gray-100 transition duration-200"
-              onClick={handleAddProduct}  // فراخوانی برای افزودن محصول جدید
+              onClick={handleAddProduct} 
             >
               ایجاد محصول جدید
             </button>
@@ -177,6 +191,15 @@ const ProductsTable: React.FC = () => {
                   زیر دسته بندی
                 </th>
                 <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
+                    موجودی
+                </th>
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
+                  قیمت
+                </th>
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
+                  برند
+                </th>
+                <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
                   توضیحات
                 </th>
                 <th className="px-4 py-2 text-start font-medium text-white uppercase tracking-wider">
@@ -194,10 +217,10 @@ const ProductsTable: React.FC = () => {
                 >
                   <td className="px-4 py-2 whitespace-nowrap text-gray-100">
                     <img
-                      src={`http://localhost:8000/images/products/images/${product.images[0]}`}
+                      src={`http://localhost:8000/images/products/thumbnails/${product.thumbnail}`}
                       alt="Product img"
-                      width={50}  // عرض تصویر
-                      height={80}  // ارتفاع تصویر
+                      width={50} 
+                      height={80} 
                       className="rounded"
                     />
                   </td>
@@ -211,6 +234,15 @@ const ProductsTable: React.FC = () => {
                     {getSubCategoryName(product.subcategory)}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-gray-300 max-w-xs overflow-hidden text-ellipsis">
+                    {product.quantity}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300 max-w-xs overflow-hidden text-ellipsis">
+                    {product.price}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300 max-w-xs overflow-hidden text-ellipsis">
+                    {product.brand}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap text-gray-300 max-w-xs overflow-hidden text-ellipsis">
                     {product.description}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap text-gray-300 flex gap-2">
@@ -222,7 +254,7 @@ const ProductsTable: React.FC = () => {
                     </button>
                     <button
                       className="text-red-500 hover:text-red-300"
-                      onClick={() => handleDeleteProduct(product._id)}
+                      onClick={() => openDeleteModal(product._id)}
                     >
                       <Trash2 size={18} />
                     </button>
@@ -268,11 +300,16 @@ const ProductsTable: React.FC = () => {
           product={productToEdit}
           onSave={async (updatedProduct: IProduct) => {
             console.log(updatedProduct); 
-            fetchProducts(page);  // بارگذاری مجدد محصولات
-            setShowForm(false);   // بستن مودال
+            fetchProducts(page);
+            setShowForm(false);
           }}
         />
       )}
+         <DeleteProductModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDeleteProduct}
+      />
     </div>
   );
 };

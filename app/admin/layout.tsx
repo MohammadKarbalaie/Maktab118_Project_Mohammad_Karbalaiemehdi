@@ -1,3 +1,5 @@
+import AdminGuard from "./components/AdminGuard";
+
 export default function ShopLayout({
   children,
 }: Readonly<{
@@ -5,7 +7,9 @@ export default function ShopLayout({
 }>) {
   return (
     <div>
+     <AdminGuard>
     {children}
+    </AdminGuard> 
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { getAccessToken, getRefreshToken, refreshAccessToken, removeTokens, setTokens } from "../../adminserver/lib/tokenManager";
 
@@ -12,13 +12,12 @@ interface DecodedToken {
 const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const router = useRouter();
+  const pathname = usePathname(); // مسیر جاری را می‌گیرد
 
   useEffect(() => {
     const token = getAccessToken();
 
-    if (!token) {
-      router.push("/admin/auth/login"); 
-    } else {
+    if (token) {
       try {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -28,30 +27,40 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         const tokenExpirationTime = decodedToken.exp;
 
         if (tokenExpirationTime < currentTime) {
+          // در صورت انقضای توکن، اقدام به تمدید آن
           refreshAccessToken().then((newToken) => {
             if (newToken) {
-              const refreshToken = getRefreshToken();  
+              const refreshToken = getRefreshToken();
               if (refreshToken) {
-                setTokens(newToken, refreshToken); 
-                setIsAuthorized(true); 
+                setTokens(newToken, refreshToken);
+                setIsAuthorized(true);
               } else {
                 removeTokens();
                 router.push("/admin/auth/login");
               }
             } else {
               removeTokens();
-              router.push("/admin/auth/login"); 
+              router.push("/admin/auth/login");
             }
           });
         } else {
-          setIsAuthorized(true);  
+          setIsAuthorized(true);
+          
+          // اگر در صفحه لاگین هستیم و کاربر لاگین کرده، به داشبورد منتقل می‌شویم
+          if (pathname === "/admin/auth/login") {
+            router.push("/admin/dashboard");
+          }
         }
       } catch {
         removeTokens();
         router.push("/admin/auth/login");
       }
+    } else {
+      if (pathname !== "/admin/auth/login") {
+        router.push("/admin/auth/login");
+      }
     }
-  }, [router]);
+  }, [router, pathname]);
 
   if (!isAuthorized) {
     return <p>در حال بارگذاری...</p>; 

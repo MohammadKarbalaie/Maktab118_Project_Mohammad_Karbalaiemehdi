@@ -2,6 +2,7 @@ import { BarChart2, Group, Menu, ShoppingBag, ShoppingCart, Users } from "lucide
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import LogoutButton from "../../adminserver/services/LogoutButton";
 
 const SIDEBAR_ITEMS = [
   {
@@ -40,7 +41,6 @@ const Sidebar = () => {
         <nav className="mt-8 flex-grow">
           {SIDEBAR_ITEMS.map((item) => (
             <div key={item.href}>
-              {/* بررسی اینکه آیا روی "محصولات" کلیک شده است */}
               {item.name === "محصولات" ? (
                 <motion.div
                   className="flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2 cursor-pointer"
@@ -104,6 +104,7 @@ const Sidebar = () => {
               )}
             </div>
           ))}
+           <LogoutButton />
         </nav>
       </div>
     </motion.div>

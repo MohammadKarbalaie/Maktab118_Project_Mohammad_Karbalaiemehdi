@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { getAllProductsReq } from "../../../adminserver/services/products-services";
-import { IProduct } from "./types";
+import { Product } from "../../../type/Product";
 import { Search } from "lucide-react";
 import { GrPrevious, GrNext } from "react-icons/gr";
 
 const ProductsTableToggle: React.FC = () => {
-  const [products, setProducts] = useState<IProduct[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [updatedProducts, setUpdatedProducts] = useState<Record<string, Partial<Product>>>({});
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -16,15 +17,22 @@ const ProductsTableToggle: React.FC = () => {
   const fetchProducts = async (currentPage: number) => {
     try {
       const response = await getAllProductsReq(currentPage, 6);
-      setProducts(response.data.products);
+      const fetchedProducts = response.data.products;
+
+      // اعمال تغییرات ذخیره‌شده به محصولات جدید
+      const mergedProducts = fetchedProducts.map((product) => ({
+        ...product,
+        ...updatedProducts[product._id],
+      }));
+
+      setProducts(mergedProducts);
+      setFilteredProducts(mergedProducts);
       setTotalPages(response.total_pages);
-      setFilteredProducts(response.data.products);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
 
-  // Handle search input changes
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
@@ -41,7 +49,6 @@ const ProductsTableToggle: React.FC = () => {
     fetchProducts(page);
   }, [page]);
 
-  // Handle double click to enable editing
   const handleDoubleClick = (productId: string, field: "quantity" | "price") => {
     setEditingFields((prev) => {
       const productFields = prev[productId] || new Set();
@@ -50,33 +57,28 @@ const ProductsTableToggle: React.FC = () => {
     });
   };
 
-  // Handle input changes and update displayed values immediately
   const handleInputChange = (productId: string, field: "quantity" | "price", value: string) => {
     setFilteredProducts((prevProducts) =>
       prevProducts.map((product) =>
         product._id === productId ? { ...product, [field]: value } : product
       )
     );
+
+    setUpdatedProducts((prev) => ({
+      ...prev,
+      [productId]: { ...prev[productId], [field]: value },
+    }));
   };
 
-  // Save changes for all edited products
   const handleSaveChanges = async () => {
-    const updates = Object.entries(editingFields).map(async ([productId, fields]) => {
-      const updatedFields: Partial<IProduct> = {};
-      fields.forEach((field) => {
-        const product = filteredProducts.find((p) => p._id === productId);
-        if (product) {
-          updatedFields[field] = product[field];
-        }
-      });
-
+    const updates = Object.entries(updatedProducts).map(async ([productId, fields]) => {
       const apiUrl = `http://localhost:8000/api/products/${productId}`;
       const response = await fetch(apiUrl, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedFields),
+        body: JSON.stringify(fields),
       });
       if (!response.ok) {
         throw new Error(`Failed to update product with ID: ${productId}`);
@@ -87,6 +89,7 @@ const ProductsTableToggle: React.FC = () => {
     try {
       await Promise.all(updates);
       setEditingFields({});
+      setUpdatedProducts({});
     } catch (error) {
       console.error("Error saving changes:", error);
     }

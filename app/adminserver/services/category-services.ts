@@ -1,6 +1,6 @@
 import apiClient from '../server'; 
 import { urls } from '../urls';
-import {Category} from '../type/Category';
+import {Category} from '../../type/Category';
 
 export const addCategory = async (data: Category): Promise<void> => {
   try {

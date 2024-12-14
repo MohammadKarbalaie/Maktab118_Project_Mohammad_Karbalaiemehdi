@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 
 interface CustomUploadProps {
-  multiple?: boolean; 
+  multiple?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; 
 }
 
@@ -69,7 +69,7 @@ const CustomUpload: React.FC<CustomUploadProps> = ({ multiple = false, onChange 
         <input
           type="file"
           id="dropzone-file"
-          accept="image/jpeg, image/png"
+          accept="image/jpeg"
           multiple={multiple}
           onChange={handleImageChange} 
           className="hidden"

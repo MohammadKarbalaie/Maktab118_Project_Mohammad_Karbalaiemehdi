@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IAddProduct } from "./types";
 import { IProduct } from "./types";
-import { urls } from "../../../adminserver/urls"; 
-import apiClient from "../../../adminserver/server"; 
+import { urls } from "../../../adminserver/urls";
+import apiClient from "../../../adminserver/server";
 import { useState, useEffect } from "react";
 import CustomUpload from "../Upload";
+import { fetchEditProducts } from "@/app/adminserver/services/products-services";
 
 export const getCategories = async () => {
   try {
-    const response = await apiClient.get(urls.categories); 
+    const response = await apiClient.get(urls.categories);
     return response.data.data.categories;
   } catch (error) {
     console.error("Failed to fetch categories:", error);
-    throw error; 
+    throw error;
   }
 };
 
@@ -26,49 +27,26 @@ export const getSubCategories = async () => {
   }
 };
 
-export const fetchEditProducts = async (id: string, data: IAddProduct) => {
-  try {
-    const formData = new FormData();
-    
-    formData.append("name", data.name);
-    formData.append("brand", data.brand);
-    formData.append("description", data.description);
-    formData.append("subcategory", data.subcategory);
-    formData.append("category", data.category);
-
-    data.images.forEach((image, index) => {
-      formData.append("images", image);
-    });
-
-    const response = await apiClient.patch(urls.productsid(id), formData, {
-      headers: { "Content-Type": "multipart/form-data" } 
-    });
-    
-    return response.data;
-  } catch (error: any) {
-    if (error.response) {
-      console.error("Response error data:", error.response.data); 
-      throw new Error(error.response.data.message || "An error occurred while updating the product.");
-    } else {
-      console.error("Error:", error.message);
-      throw new Error(error.message);
-    }
-  }
-};
-
 interface EditProductModalProps {
   onClose: () => void;
   product: IProduct;
   onSave: (productData: IProduct) => Promise<void>;
 }
 
-const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, onSave }) => {
+const EditProductModal: React.FC<EditProductModalProps> = ({
+  onClose,
+  product,
+  onSave,
+}) => {
   const [name, setName] = useState(product.name);
   const [category, setCategory] = useState(product.category);
   const [brand, setBrand] = useState(product.brand);
   const [subcategory, setSubCategory] = useState(product.subcategory);
   const [description, setDescription] = useState(product.description);
-  const [images, setImages] = useState<File[]>([]); 
+  const [quantity, setQuantity] = useState(product.quantity);
+  const [price, setPrice] = useState(product.price);
+  const [thumbnail, setThumbnail] = useState<File | null>(null); 
+  const [images, setImages] = useState<File[]>([]);
 
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubCategories] = useState<any[]>([]);
@@ -78,7 +56,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
       try {
         const categoriesData = await getCategories();
         setCategories(categoriesData);
-        
+
         const subcategoriesData = await getSubCategories();
         setSubCategories(subcategoriesData);
       } catch (error) {
@@ -95,20 +73,29 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
     }
   };
 
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setThumbnail(e.target.files[0]);
+    }
+  };
+
   const handleSave = async () => {
-    const updatedProduct: IProduct = {
-      ...product,
+    const updatedProduct: IAddProduct = {
       name,
       category,
       subcategory,
+      price,
+      quantity,
+      thumbnail,
       brand,
       description,
+      images,
     };
 
     try {
-      await fetchEditProducts(product._id, { ...updatedProduct, images });
-      onSave(updatedProduct);
-      onClose(); 
+      await fetchEditProducts(product._id, updatedProduct);
+      onSave(updatedProduct as IProduct);
+      onClose();
     } catch (error) {
       console.error("Error saving the product:", error);
       alert("Error saving the product! Please try again.");
@@ -127,7 +114,23 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
             placeholder="Product Name"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
-          
+
+          <input
+            type="number"
+            value={quantity}
+            onChange={(e) => setQuantity((e.target.value))}
+            placeholder="Quantity"
+            className="p-2 bg-gray-700 text-white rounded-lg"
+          />
+
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice((e.target.value))}
+            placeholder="Price"
+            className="p-2 bg-gray-700 text-white rounded-lg"
+          />
+
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -148,7 +151,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
           >
             <option value="">Select Subcategory</option>
             {subcategories
-              .filter((subcat) => subcat.category === category) 
+              .filter((subcat) => subcat.category === category)
               .map((subcategory) => (
                 <option key={subcategory._id} value={subcategory._id}>
                   {subcategory.name}
@@ -157,26 +160,21 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ onClose, product, o
           </select>
 
           <input
-            type="text"
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-            placeholder="Brand"
+            type="file"
+            onChange={handleThumbnailChange}
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
-          
+
+          <CustomUpload multiple={true} onChange={handleImageChange} />
+
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
-          
-          <CustomUpload multiple={true} onChange={handleImageChange} />
-          
-          
-
         </form>
-        
+
         <div className="flex gap-6 mt-4 justify-center">
           <button
             className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
