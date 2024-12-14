@@ -5,17 +5,21 @@ import axios from "axios";
 import { Category, ISubcategory } from "@/app/type/Category";
 import { Product } from "@/app/type/Product";
 import Link from "next/link";
+import { BiBasket } from "react-icons/bi";
+import { useCart } from "../../context/CartContext"; // وارد کردن Context
 
 const Sidebar = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<ISubcategory[]>([]);
-  const [filteredSubcategories, setFilteredSubcategories] = useState<ISubcategory[]>([]);
+  const [filteredSubcategories, setFilteredSubcategories] = useState<
+    ISubcategory[]
+  >([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
+  const { addToCart } = useCart(); // دسترسی به `addToCart` از context
   const apiUrl = "http://localhost:8000/api";
 
-   
   useEffect(() => {
     axios
       .get(`${apiUrl}/categories`)
@@ -31,7 +35,7 @@ const Sidebar = () => {
     axios
       .get(`${apiUrl}/subcategories`)
       .then((response) => {
-        setSubcategories(response.data.data.subcategories); 
+        setSubcategories(response.data.data.subcategories);
       })
       .catch((error) => {
         console.error("Error fetching subcategories:", error);
@@ -109,25 +113,37 @@ const Sidebar = () => {
       <div className="products grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
         {products.length > 0 ? (
           products.map((product) => (
-            <Link
-              href={`/Shop/product/${product._id}`}
+            <div
               key={product._id}
               className="product-card bg-white rounded-lg shadow-md hover:shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 cursor-pointer"
             >
-              <img
-                src={`http://localhost:8000/images/products/images/${product.images[0]}`}
-                alt={product.name}
-                className="product-image w-full h-60"
-              />
+              <Link
+                href={`/Shop/product/${product._id}`}
+                className="block"
+              >
+                <img
+                  src={`http://localhost:8000/images/products/images/${product.images[0]}`}
+                  alt={product.name}
+                  className="product-image w-full h-60"
+                />
+              </Link>
               <div className="product-info p-4">
                 <h4 className="product-name text-xl font-semibold text-gray-800">
                   {product.name}
                 </h4>
-                <p className="product-price text-lg font-semibold text-teal-500 mt-4">
-                  قیمت: {product.price} تومان
-                </p>
+                <div className="flex justify-between">
+                  <p className="product-price text-lg font-semibold text-teal-500 mt-4">
+                    قیمت: {product.price} تومان
+                  </p>
+                  <button
+                    className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-500 flex items-center"
+                    onClick={() => addToCart(product)} // افزودن محصول به سبد خرید
+                  >
+                    <BiBasket className="text-2xl" />
+                  </button>
+                </div>
               </div>
-            </Link>
+            </div>
           ))
         ) : (
           <p>هیچ محصولی برای نمایش یافت نشد</p>

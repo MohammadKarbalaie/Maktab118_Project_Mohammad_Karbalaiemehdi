@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "./Shop/context/CartContext";
 
 
 const vazir = Vazirmatn({
@@ -22,8 +23,9 @@ export default function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body className={vazir.variable}>
-        
+        <CartProvider>
         {children}
+        </CartProvider>
       </body>
     </html>
   );

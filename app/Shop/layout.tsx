@@ -1,3 +1,4 @@
+import { CartProvider } from "./context/CartContext";
 
 export default function ShopLayout({
   children,
@@ -6,7 +7,9 @@ export default function ShopLayout({
 }) {
   return (
     <div className={`antialiased`}>
+      <CartProvider>
       {children}
+      </CartProvider>
     </div>
   );
 }

@@ -2,23 +2,24 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { BiBasket, BiMenu, BiSearch, BiUser } from "react-icons/bi";
-import apiClient from "@/app/adminserver/server"; 
+import apiClient from "@/app/adminserver/server";
 import { urls } from "@/app/adminserver/urls";
-import { Category } from "@/app/adminserver/type/Category";
-import Image from "next/image"; 
-import Cart from "../components/Cart/Cart"; 
+import { Category } from "../../type/Category";
+import Image from "next/image";
+import Cart from "../components/Cart/Cart";
+import { useCart } from "../context/CartContext";  
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [cartItems] = useState<number>(0);
-  const [isCartVisible, setIsCartVisible] = useState<boolean>(false); 
+  const { cartItems } = useCart(); 
+  const [isCartVisible, setIsCartVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await apiClient.get(urls.categories);
-        setCategories(res.data.data.categories); 
+        setCategories(res.data.data.categories);
       } catch (error) {
         console.error("Error fetching categories", error);
       }
@@ -47,7 +48,7 @@ function Header() {
             src="/Logo1.png"
             alt="Logo"
             width={100}
-            height={80} 
+            height={80}
           />
         </div>
 
