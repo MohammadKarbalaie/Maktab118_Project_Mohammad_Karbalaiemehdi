@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
+import './globals.css'
 import { Vazirmatn } from "next/font/google";
-import "./globals.css";
-import { CartProvider } from "@/context/CartContext";
-
-
+import { Providers } from './providers'
+import { Toaster } from "react-hot-toast";
 
 const vazir = Vazirmatn({
   subsets: ["latin", "arabic"],
   variable: "--font-vazirmatn",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],  
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -19,15 +18,16 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="fa" dir="rtl">
-      <body className={vazir.variable}>
-        <CartProvider>
+      <body className={vazir.className}>
+        <Providers>
+          <Toaster/>
           {children}
-        </CartProvider>
+        </Providers>
       </body>
     </html>
-  );
+  )
 }
