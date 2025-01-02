@@ -5,13 +5,13 @@ import BikeCarousel from "../components/Shop/PopularBikesCarousel";
 import BikeTestimonials from "../components/Shop/BikeTestimonials";
 import AboutUs from "../components/Us/AboutUs";
 import ContactUs from "../components/Us/ContactUs";
-import Header from "@/components/shared/Header";
+ import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 
 function HomeShop() {
   return (
     <div>
-      <Header/>
+       <Header/> 
       <div className="min-h-screen">
         <Hero />
         <div className="my-10 py-8 px-4 sm:px-8 lg:mx-40 border rounded-lg bg-gray-50">
@@ -33,8 +33,8 @@ function HomeShop() {
         <div className="py-8">
           <ContactUs />
         </div>
+        <Footer/>
       </div>
-      <Footer/>
     </div>
   );
 }

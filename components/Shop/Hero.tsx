@@ -34,12 +34,12 @@ function Hero() {
                راهی برای سلامتی و نشاط روزانه است.
             </p>
             <div className="flex items-start gap-4 mx-auto xl:mx-0">
-              <Link href="/Shop/product" className="mx-auto md:mx-0">
+              <Link href="/product" className="mx-auto md:mx-0">
                 <button className="bg-red-500 text-white px-6 py-2 rounded">
                 خرید کنید
                 </button>
               </Link>
-              <Link href="/Shop/product" className="mx-auto md:mx-0 ">
+              <Link href="/product" className="mx-auto md:mx-0 ">
                 <button className="bg-black text-white px-6 py-2 rounded">
                 دوچرخه های ما
                 </button>

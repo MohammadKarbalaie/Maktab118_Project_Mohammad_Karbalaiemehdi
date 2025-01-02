@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useState } from "react";
-import { useCart } from "../../context/CartContext"; // کانتکست سبد خرید را وارد کنید
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../app/redux/store";
+import { addToCart, Product } from "../../app/redux/slices/cartSlice";
 
 export interface ProductDetailsProps {
   product: {
@@ -12,24 +14,31 @@ export interface ProductDetailsProps {
     brand: string;
     category: { name: string };
     subcategory: { name: string };
-    images: File[];
+    images: string[];
+    quantity: number;
   };
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
-  const { addToCart } = useCart(); // از کانتکست سبد خرید استفاده می‌کنیم
+  const dispatch = useDispatch<AppDispatch>();
   const [selectedImage, setSelectedImage] = useState(product.images[0]);
 
-  // تابعی برای افزودن محصول به سبد خرید
   const handleAddToCart = () => {
-    addToCart({
-      ...product,
-      quantity: 1,
-      category: product.category.name, // اصلاح شده: به جای string، نام دسته‌بندی را استفاده کنید
-      thumbnail: selectedImage, // اصلاح شده: thumbnail را به تصویر انتخابی انتساب می‌دهیم
-      subcategory: product.subcategory.name, // اصلاح شده: فقط نام زیر دسته‌بندی را ارسال می‌کنیم
-    });
+    const cartProduct: Product = {
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      quantity: product.quantity,
+      images: product.images,
+      category: product.category.name,
+      subcategory: product.subcategory.name,
+      brand: product.brand,
+      description: product.description,
+      thumbnail: selectedImage,
+    };
+    dispatch(addToCart(cartProduct));
   };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Main container */}
@@ -98,3 +107,4 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 };
 
 export default ProductDetails;
+

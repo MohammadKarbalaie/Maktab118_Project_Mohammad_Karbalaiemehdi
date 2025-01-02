@@ -1,7 +1,7 @@
 'use client'
 import Footer from "@/components/shared/Footer";
 import Header from "@/components/shared/Header";
-import { store } from "@/store/store";
+import { store } from "../../app/redux/store";
 import { Provider } from "react-redux";
 export default function ProductLayout({
   children,

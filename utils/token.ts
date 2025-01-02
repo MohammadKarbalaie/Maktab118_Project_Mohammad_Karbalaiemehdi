@@ -1,4 +1,3 @@
-// TokenManager.tsx
 import React, { useEffect, useState } from "react"; 
 import Cookies from "js-cookie";
 import apiClient, { setAuthHeader } from "../services/api"; 
@@ -32,8 +31,8 @@ export const removeTokens = () => {
 const isAccessTokenExpired = (token: string): boolean => {
   try {
     const decoded = JSON.parse(atob(token.split('.')[1]));
-    const expirationTime = decoded.exp * 1000; // تبدیل به میلی‌ثانیه
-    return expirationTime < Date.now(); // اگر زمان انقضا گذشته باشد true برمی‌گرداند
+    const expirationTime = decoded.exp * 1000; // tabdil be mimisanie
+    return expirationTime < Date.now(); // agar true bashe zaman engheza gozashte
   } catch (error) {
     console.error('Error decoding access token:', error);
     return true;

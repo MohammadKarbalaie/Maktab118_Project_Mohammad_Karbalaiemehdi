@@ -1,9 +1,9 @@
-import { User } from "@/types/user";
+import { IIUser, User } from "@/types/user";
 import apiClient, { setAuthHeader } from "./api";  
 import { urls } from "./urls";  
 import { LoginRequest, LoginResponse } from "@/types/login";
 import { setTokens } from "@/utils/token";
-import { setUser } from "@/store/userSlice";
+import { setUser } from "../app/redux/slices/cartSlice";
 import toast from "react-hot-toast";
 import { Dispatch } from "@reduxjs/toolkit";
 
@@ -26,10 +26,9 @@ export const signup = async (data: User): Promise<void> => {
   };
   
 
-  export const login = async (data: LoginRequest, dispatch: Dispatch): Promise<User> => {
+  export const login = async (data: LoginRequest, dispatch: Dispatch): Promise<IIUser> => {
     try {
-      const response = await apiClient.post<LoginResponse>(urls.auth.login, data);
-      console.log('Login Response:', response);
+      const response = await apiClient.post<LoginResponse>(urls.auth.login, data);      console.log("Login Response:", response);
   
       const { accessToken, refreshToken } = response.data.token;
   
@@ -39,15 +38,17 @@ export const signup = async (data: User): Promise<void> => {
   
       setAuthHeader(accessToken);
       setTokens(accessToken, refreshToken);
-      const user = response.data.data.user;
   
-      dispatch(setUser(user));  
-      toast.success('ورود با موفقیت انجام شد!');
+      const user = response.data.data.user; // بازگشت کاربر با نوع IIUser
   
-      return user;   
+      dispatch(setUser(user)); // ذخیره کاربر در Redux
+      toast.success("ورود با موفقیت انجام شد!");
+  
+      return user;
     } catch (error) {
-      console.error('Login failed:', error);
-      toast.error('ورود ناموفق بود.');
+      console.error("Login failed:", error);
+      toast.error("ورود ناموفق بود.");
       throw error;
     }
   };
+  

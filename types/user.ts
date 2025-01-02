@@ -13,6 +13,7 @@ export type IUser = {
 };
 
 export interface IIUser {
+    password: string | undefined;
     _id: string;
     firstname: string;
     lastname: string;
@@ -25,9 +26,13 @@ export interface IIUser {
 }
 
 
-export interface UserResponse{
+export interface LoginResponse {
+    data: {
+      user: IIUser; 
+    };
     token: {
-        accessToken: string;
-        refreshToken: string;
-      };
-}
+      accessToken: string;
+      refreshToken: string;
+    };
+  }
+  
