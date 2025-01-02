@@ -1,15 +1,13 @@
 'use client'
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../store/store"; // مسیر مربوط به تعریف store شما
+import { RootState } from "../../../../app/redux/store";
 
-
-
-function Page() {
-  const user = useSelector((state: RootState) => state.user); // فرض بر این است که اطلاعات کاربر در userSlice ذخیره می‌شود
+function PersonalInfo() {
+  const user = useSelector((state: RootState) => state.cart.user);
 
   if (!user) {
-    return <div>در حال بارگذاری اطلاعات کاربر...</div>; // نمایش پیام بارگذاری در صورت عدم وجود اطلاعات کاربر
+    return <div>در حال بارگذاری اطلاعات کاربر...</div>;
   }
 
   return (
@@ -18,30 +16,28 @@ function Page() {
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div>
           <label>نام:</label>
-          <div>{user.firstname}</div> {/* نام کاربر */}
+          <div>{user.firstname}</div>
         </div>
         <div>
           <label>نام خانوادگی:</label>
-          <div>{user.lastname}</div> {/* نام خانوادگی کاربر */}
+          <div>{user.lastname}</div>
         </div>
         <div>
           <label>نام کاربری:</label>
-          <div>{user.username}</div> {/* نام کاربری */}
+          <div>{user.username}</div>
         </div>
         <div>
           <label>شماره تلفن:</label>
-          <div>{user.phoneNumber}</div> {/* شماره تلفن */}
+          <div>{user.phoneNumber}</div>
         </div>
         <div>
           <label>آدرس:</label>
-          <div>{user.address}</div> {/* آدرس */}
+          <div>{user.address}</div>
         </div>
       </div>
     </div>
   );
 }
 
-export default Page;
-
-
+export default PersonalInfo;
 

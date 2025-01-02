@@ -1,42 +1,36 @@
 "use client"
-import React, { use, useEffect, useState } from "react";
-import ProductDetails from "../../../components/Product/ProductDetailes";
-import { getProductById } from "../../../services/product-service";
-import { IProductById } from "../../../types/product";
 
+import React from 'react';
+import { useParams } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import ProductDetails from '../../../components/Product/ProductDetailes';
+import { Product } from '../../redux/slices/cartSlice';
 
-interface ProductPageProps {
-  params: Promise<{ id: string }>;
-}
+const ProductPage: React.FC = () => {
+  const params = useParams();
+  const id = params.id as string;
+  const products = useSelector((state: RootState) => state.cart.products);
+  
+  const product = products.find(p => p._id === id);
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const { id } = use(params); 
-  const [product, setProduct] = useState<IProductById["data"]["product"] | null>(
-    null
-  );
-
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await getProductById(id);
-        if (response?.data?.product) {
-          setProduct(response.data.product);
-        }
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-      }
+  const transformProduct = (p: Product | undefined) => {
+    if (!p) return null;
+    return {
+      ...p,
+      category: { name: p.category },
+      subcategory: { name: p.subcategory }
     };
+  };
 
-    fetchProductDetails();
-  }, [id]);
+  const transformedProduct = transformProduct(product);
 
-  if (!product) {
-    return <div>Loading...</div>;
+  if (!transformedProduct) {
+    return <div>Product not found</div>;
   }
 
-  return (
-    <div>
-    <ProductDetails product={product} />    
-    </div>
-  );
-}
+  return <ProductDetails product={transformedProduct} />;
+};
+
+export default ProductPage;
+

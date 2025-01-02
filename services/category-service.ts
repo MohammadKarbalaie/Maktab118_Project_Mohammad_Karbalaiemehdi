@@ -16,7 +16,7 @@ export const addCategory = async (data: Category): Promise<void> => {
 
 export const getCategories = async () => {
     try {
-      const response = await apiClient.get(urls.categories,); 
+      const response = await apiClient.get(urls.categories); 
       console.log('service',response.data);
       return response.data; 
     } catch (error) {

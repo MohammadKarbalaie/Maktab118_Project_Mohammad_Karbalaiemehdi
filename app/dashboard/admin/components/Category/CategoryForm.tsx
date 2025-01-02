@@ -1,14 +1,16 @@
 import { ChangeEvent, useState } from "react";
 import { addCategory } from "../../../../../services/category-service"; 
+import { Category } from "@/types/category";
 
 interface NewCategoryFormProps {
   onClose: () => void; 
 }
 
 const NewCategoryForm: React.FC<NewCategoryFormProps> = ({ onClose }) => {
-  const [newCategory, setNewCategory] = useState<{ name: string }>({
+  const [newCategory, setNewCategory] = useState<Partial<Category>>({
     name: "",
   });
+  
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -17,7 +19,7 @@ const NewCategoryForm: React.FC<NewCategoryFormProps> = ({ onClose }) => {
 
   const handleSubmit = async () => {
     try {
-      await addCategory(newCategory);
+      await addCategory(newCategory as Category);
       alert("دسته‌بندی با موفقیت اضافه شد!");
       onClose(); 
     } catch (error) {

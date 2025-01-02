@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import React, { useEffect, useCallback } from "react";
 import Cookies from "js-cookie";
 import {
@@ -18,20 +18,29 @@ interface DecodedToken {
 
 const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
+  const pathname = usePathname();
 
-  const handleRedirect = useCallback((role: string | undefined) => {
-    if (role === "ADMIN") {
-      router.push("/dashboard/admin");
-    } else if (role === "USER") {
-      router.push("/dashboard/user");
-    } else {
-      router.push("/auth/login");
-    }
-  }, [router]);
+  const handleRedirect = useCallback(
+    (role: string | undefined) => {
+      const isAdminPath = pathname.startsWith("/dashboard/admin");
+
+      if (isAdminPath && role !== "ADMIN") {
+        router.push("/not-found"); 
+        return;
+      }
+
+      if (role === "USER") {
+        router.push("/dashboard/user");
+      } else if (!role) {
+        router.push("/auth/login");
+      }
+    },
+    [router, pathname]
+  );
 
   useEffect(() => {
     const token = getAccessToken();
-    const role = Cookies.get("Role");
+    const role = Cookies.get("role");
 
     if (token) {
       try {
@@ -61,15 +70,15 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         } else {
           handleRedirect(role);
         }
-      } catch {
+      } catch (error) {
+        console.error("Error decoding token:", error);
         removeTokens();
         router.push("/auth/login");
       }
     } else {
-      removeTokens();
-      router.push("/auth/login");
+      handleRedirect(role);
     }
-  }, [router, handleRedirect]);
+  }, [router, pathname, handleRedirect]);
 
   return <>{children}</>;
 };

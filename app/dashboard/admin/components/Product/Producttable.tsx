@@ -7,7 +7,7 @@ import { getAllProductsReq } from "../../../../../services/product-service";
 import { Category } from "../../../../../types/category";
 import { getSubCategories } from "../../../../../services/subcategory-service";
 import { getCategories } from "../../../../../services/category-service";
-import { Product } from "../../../../../types/product";
+import { IProduct, Product} from "../../../../../types/product";
 import AddProductModal from "./ProductForm";  
 import EditProductModal from "./UpdateProductForm"; 
 import { GrPrevious, GrNext } from "react-icons/gr";
@@ -16,13 +16,13 @@ import DeleteProductModal from "./DeleteProductModal";
 
 const ProductsTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<Category[]>([]);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [showForm1, setShowForm1] = useState<boolean>(false);
-  const [productToEdit, setProductToEdit] = useState<Product | null>(null); 
+  const [productToEdit, setProductToEdit] = useState<IProduct | null>(null); 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -132,7 +132,7 @@ const ProductsTable: React.FC = () => {
     setShowForm1(true); 
   };
 
-  const handleEditProduct = (product: Product) => {
+  const handleEditProduct = (product: IProduct) => {
     setProductToEdit(product); 
     setShowForm(true);
   };

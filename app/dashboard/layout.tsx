@@ -1,4 +1,4 @@
-;
+
 
 
 export default function DashLayout({
@@ -8,9 +8,7 @@ export default function DashLayout({
   }>) {
     return (
       <div>
-        
         {children}
-   
       </div>
     );
   }

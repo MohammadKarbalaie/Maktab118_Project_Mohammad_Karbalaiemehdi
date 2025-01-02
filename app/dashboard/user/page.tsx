@@ -6,17 +6,19 @@ import BillingPayments from './components/BillingPayments';
 import OrderHistory from './components/OrderHistory';
 import LogoutButton from '@/services/LogoutButton'; 
 import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
+import { RootState } from "../../../app/redux/store";
 import Link from 'next/link';
+
 const AccountPage = () => {
-  const username = useSelector((state: RootState) => state.user.username);
+  const user = useSelector((state: RootState) => state.cart.user);
+  const username = user ? user.username : 'نام کاربر';
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex justify-between items-center bg-gray-100 p-4">
         <h1 className="flex gap-2 text-2xl font-bold">
           <BiUser className="text-red-600" />
-          {username ? username : 'نام کاربر'}
-         
+          {username}
         </h1>
         <LogoutButton />  
       </header>
@@ -42,3 +44,4 @@ const AccountPage = () => {
 };
 
 export default AccountPage;
+

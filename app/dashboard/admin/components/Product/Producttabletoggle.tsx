@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { getAllProductsReq } from "../../../../../services/product-service";
 import { Product } from "../../../../../types/product";

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -6,8 +7,8 @@ import * as z from "zod";
 import Link from "next/link";
 import { signup } from "@/services/authService";
 import toast from "react-hot-toast";
-import { useRouter } from 'next/navigation';  
-
+import { useRouter } from 'next/navigation';
+import { ErrorHandler } from '@/utils/ErrorHandler';
 
 const signupSchema = z
   .object({
@@ -32,34 +33,39 @@ const signupSchema = z
       .string()
       .min(6, "رمز عبور باید حداقل ۶ کاراکتر باشد")
       .nonempty("رمز عبور الزامی است"),
-  
+    confirmPassword: z
+      .string()
+      .min(6, "تکرار رمز عبور باید حداقل ۶ کاراکتر باشد")
+      .nonempty("تکرار رمز عبور الزامی است"),
   })
-
-
-type SignupFormData = z.infer<typeof signupSchema>;
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "رمز عبور و تکرار آن مطابقت ندارند",
+    path: ["confirmPassword"],
+  });
 
 const SignupPage = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormData>({
+  } = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
   });
+
   const router = useRouter();  
-  const onSubmit = async (data: SignupFormData) => {
-   try {
-    await signup(data);
-    toast.success("ورود با موفقیت انجام شد!", {
-      position: "top-right",
-      style: { backgroundColor: "green", color: "white" },
-    });
-    router.push('/dashboard/user');
-   } catch (error) {
-      console.error(error);
-      console.log('not created');
-      
-   }
+
+  const onSubmit = async (data: z.infer<typeof signupSchema>) => {
+    const { confirmPassword, ...formData } = data;
+    try {
+      await signup(formData);
+      toast.success("ورود با موفقیت انجام شد!", {
+        position: "top-right",
+        style: { backgroundColor: "green", color: "white" },
+      });
+      router.push('/auth/login');
+    } catch (error) {
+      ErrorHandler(error);
+    }
   };
 
   return (
@@ -80,8 +86,8 @@ const SignupPage = () => {
                 errors.firstname ? "border-red-500" : "border-gray-300"
               }`}
             />
-            {errors.firstname && (
-              <p className="text-red-500 text-sm">{errors.firstname.message}</p>
+            {errors.firstname?.message && (
+              <p className="text-red-500 text-sm">{String(errors.firstname.message)}</p>
             )}
           </div>
 
@@ -94,8 +100,8 @@ const SignupPage = () => {
                 errors.lastname ? "border-red-500" : "border-gray-300"
               }`}
             />
-            {errors.lastname && (
-              <p className="text-red-500 text-sm">{errors.lastname.message}</p>
+            {errors.lastname?.message && (
+              <p className="text-red-500 text-sm">{String(errors.lastname.message)}</p>
             )}
           </div>
         </div>
@@ -109,8 +115,8 @@ const SignupPage = () => {
               errors.username ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.username && (
-            <p className="text-red-500 text-sm">{errors.username.message}</p>
+          {errors.username?.message && (
+            <p className="text-red-500 text-sm">{String(errors.username.message)}</p>
           )}
         </div>
 
@@ -123,8 +129,8 @@ const SignupPage = () => {
               errors.phoneNumber ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.phoneNumber && (
-            <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>
+          {errors.phoneNumber?.message && (
+            <p className="text-red-500 text-sm">{String(errors.phoneNumber.message)}</p>
           )}
         </div>
 
@@ -137,8 +143,8 @@ const SignupPage = () => {
               errors.address ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.address && (
-            <p className="text-red-500 text-sm">{errors.address.message}</p>
+          {errors.address?.message && (
+            <p className="text-red-500 text-sm">{String(errors.address.message)}</p>
           )}
         </div>
 
@@ -151,19 +157,32 @@ const SignupPage = () => {
               errors.password ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password.message}</p>
+          {errors.password?.message && (
+            <p className="text-red-500 text-sm">{String(errors.password.message)}</p>
           )}
         </div>
 
-        
+        <div className="mb-4">
+          <label className="block text-gray-700">تکرار رمز عبور</label>
+          <input
+            type="password"
+            {...register("confirmPassword")}
+            className={`w-full px-4 py-2 border rounded-lg ${
+              errors.confirmPassword ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          {errors.confirmPassword?.message && (
+            <p className="text-red-500 text-sm">{String(errors.confirmPassword.message)}</p>
+          )}
+        </div>
 
         <button
           type="submit"
-          className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-800"
+          className={`w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-800`}
         >
           ثبت‌نام
         </button>
+
         <div className="flex flex-col justify-center items-start mt-4">
           <Link href="/auth/login">اکانت کاربری دارم| ورود</Link>
         </div>

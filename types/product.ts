@@ -22,9 +22,32 @@ export interface ProductData {
       thumbnail: File | null; 
       images: File[]; 
     }
+
+
+    
+
+    export interface I_Product {
+      _id:string
+      name: string;
+      price: number;
+      quantity: number;
+    }
     
     
     export interface Product {
+      _id:string;
+      category: string;
+      subcategory: string;
+      name: string;
+      price: number;
+      quantity: number;
+      brand: string;
+      description: string;
+      thumbnail:File | null
+      images: File[];
+    }
+
+    export interface IIIProduct {
       _id:string;
       category: string;
       subcategory: string;
@@ -43,7 +66,7 @@ export interface ProductData {
       total: number;
       total_pages: number;
       data: {
-        products: Product[];
+        products: IProduct[];
       };
     }
   
@@ -94,12 +117,26 @@ export interface ProductData {
       brand: string;
       subcategory: string;
       category: string;
-      price: string;
-      quantity: string;
+      price: number;
+      quantity: number;
       description: string;
       thumbnail:File | null
       images: File[];
     }
+
+    export interface AddProduct {
+      name: string;
+      brand: string;
+      subcategory: string;
+      category: string;
+      price: number;
+      quantity: number;
+      description: string;
+      thumbnail:File | null
+      images: File[];
+    }
+
+
   
   
   

@@ -1,6 +1,6 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search } from 'lucide-react';
 import {
   AiOutlineCloseCircle,
   AiOutlineHourglass,
@@ -8,17 +8,16 @@ import {
 } from "react-icons/ai";
 import moment from "jalali-moment";
 import { getorders } from "../../../../../services/order-service";
-import { getUsers } from "../../../../../services/user-service";  // اضافه کردن import
-import { urls } from "../../../../../services/urls";
+import { getUsers } from "../../../../../services/user-service";
+import { IIUser } from "../../../../../types/user";
+import { Order } from "../../../../../types/order";
 import apiClient from "../../../../../services/api";
-import {IIUser} from "../../../../../types/user";
-import {Order} from "../../../../../types/order";
 
-const OrdersTable = () => {
+const OrdersTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
-  const [users, setUsers] = useState<IIUser[]>([]); 
+  const [users, setUsers] = useState<IIUser[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
@@ -73,25 +72,43 @@ const OrdersTable = () => {
   ) => {
     try {
       const newStatus = !currentStatus;
-      await apiClient.patch(`${urls.orders}/${orderId}`, {
+      console.log(`Updating order ${orderId} to status: ${newStatus}`);
+      const response = await apiClient.patch(`/orders/${orderId}`, {
         deliveryStatus: newStatus,
       });
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === orderId
-            ? { ...order, deliveryStatus: newStatus }
-            : order
-        )
-      );
-      setFilteredOrders((prevFiltered) =>
-        prevFiltered.map((order) =>
-          order._id === orderId
-            ? { ...order, deliveryStatus: newStatus }
-            : order
-        )
-      );
+
+      console.log('Server response:', response.data);
+
+      if (response.data.status === 'success' && response.data.data.order) {
+        const updatedOrder = response.data.data.order;
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, ...updatedOrder } : order
+          )
+        );
+        setFilteredOrders((prevFiltered) =>
+          prevFiltered.map((order) =>
+            order._id === orderId ? { ...order, ...updatedOrder } : order
+          )
+        );
+        console.log(`Successfully updated order ${orderId} status to ${newStatus}`);
+      } else {
+        throw new Error(response.data.error || 'Unexpected server response format');
+      }
     } catch (error) {
       console.error("Error updating delivery status:", error);
+      let errorMessage = "خطا در به‌روزرسانی وضعیت سفارش. لطفاً دوباره تلاش کنید.";
+      if (error instanceof Error) {
+        errorMessage += ` علت: ${error.message}`;
+        if ('response' in error && error.response) {
+          // @ts-ignore
+          const responseData = error.response.data;
+          if (responseData && responseData.details) {
+            errorMessage += `\nجزئیات خطا: ${responseData.details}`;
+          }
+        }
+      }
+      alert(errorMessage);
     }
   };
 
@@ -164,7 +181,7 @@ const OrdersTable = () => {
                     {order._id}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
-                    {getUserNameById(order.user)} {/* نمایش نام مشتری */}
+                    {getUserNameById(order.user)}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
                     ${order.totalPrice.toLocaleString()}
@@ -182,7 +199,7 @@ const OrdersTable = () => {
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950">
                     {moment(order.deliveryDate)
-                      .locale("fa") // تنظیم برای نمایش شمسی
+                      .locale("fa")
                       .format("YYYY/MM/DD")}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950 flex gap-2">
@@ -243,3 +260,4 @@ const OrdersTable = () => {
 };
 
 export default OrdersTable;
+

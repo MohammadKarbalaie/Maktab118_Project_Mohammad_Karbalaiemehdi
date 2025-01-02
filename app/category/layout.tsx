@@ -7,6 +7,7 @@ export default function CategoryLayout({
 }) {
   return (
     <div className={`antialiased`}>
+      
         <Header/>
         {children}
         <Footer/>

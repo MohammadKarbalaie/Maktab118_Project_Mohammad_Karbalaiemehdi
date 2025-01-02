@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { IAddProduct, Product, ProductData } from "../../../../../types/product";
+import { IAddProduct, Product } from "../../../../../types/product";
 import { IProduct } from "../../../../../types/product";
 import { urls } from "../../../../../services/urls";
 import apiClient from "../../../../../services/api";
@@ -31,7 +31,7 @@ export const getSubCategories = async () => {
 
 interface EditProductModalProps {
   onClose: () => void;
-  product: Product;
+  product: IProduct;
   onSave: (productData: Product) => Promise<void>;
 }
 
@@ -93,6 +93,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       description,
       images,
     };
+    
 
     try {
       await fetchEditProducts(product._id, updatedProduct);
@@ -120,7 +121,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           <input
             type="number"
             value={quantity}
-            onChange={(e) => setQuantity((e.target.value))}
+            onChange={(e) => setQuantity(parseInt(e.target.value))}
             placeholder="Quantity"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
@@ -128,7 +129,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           <input
             type="number"
             value={price}
-            onChange={(e) => setPrice((e.target.value))}
+            onChange={(e) => setPrice(parseInt(e.target.value))}
             placeholder="Price"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
