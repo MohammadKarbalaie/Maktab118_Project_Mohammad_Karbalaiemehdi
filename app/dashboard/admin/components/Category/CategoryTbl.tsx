@@ -63,7 +63,6 @@ const CategoryTbl: React.FC = () => {
 
   return (
     <div className="w-full bg-gray-200 bg-opacity-50 backdrop-blur-md mb-6 shadow-lg rounded-xl p-4 sm:p-6 border">
-      {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h3 className="text-base sm:text-lg md:text-xl font-semibold text-slate-800">
           لیست دسته بندی ها
@@ -85,7 +84,6 @@ const CategoryTbl: React.FC = () => {
         />
       )}
 
-      {/* Table Section */}
       <div className="overflow-x-auto rounded-md">
         <table className="table-auto w-full border rounded-md bg-white border-slate-200">
           <thead>

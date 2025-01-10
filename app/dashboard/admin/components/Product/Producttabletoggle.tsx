@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { getAllProductsReq } from "../../../../../services/product-service";
 import { Product } from "../../../../../types/product";
@@ -19,7 +20,6 @@ const ProductsTableToggle: React.FC = () => {
       const response = await getAllProductsReq(currentPage, 6);
       const fetchedProducts = response.data.products;
 
-      // اعمال تغییرات ذخیره‌شده به محصولات جدید
       const mergedProducts = fetchedProducts.map((product) => ({
         ...product,
         ...updatedProducts[product._id],

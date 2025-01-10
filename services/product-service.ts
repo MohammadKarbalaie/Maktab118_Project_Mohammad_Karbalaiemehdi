@@ -2,11 +2,11 @@
 import  apiClient  from './api';
 import { urls } from './urls';
 import { getAccessToken } from '../utils/token';
-import { GetProductsResponse, IAddProduct, IProductById, Product, ProductData } from '../types/product';
+import { GetProductsResponse, IProduct, IProductById, Product, AddProduct } from '../types/product';
 import axios from 'axios';
 
 //-----------------------------------------------------------اضافه کردن محصولات 
-export async function addProduct(data: ProductData) {
+export async function addProduct(data: FormData) {
   const token = getAccessToken();
   try {
     const response = await apiClient.post(urls.products, data, {
@@ -38,7 +38,7 @@ export const getProductsByCategoryId = async (
     });
     console.log('hi b: ca',response);
     
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("Failed to fetch products for category:", error);
     return { products: [], total_pages: 0 };
@@ -52,7 +52,7 @@ export const getProductsByCategoryId = async (
 export const getAllProductsReq = async (
   page: number,
   limit: number
-): Promise<{ data: { products: Product[] }; total_pages: number }> => {
+): Promise<{ data: { products: IProduct[] }; total_pages: number }> => {
   try {
     const response: { data: GetProductsResponse } = await apiClient.get(
       `${urls.products}?page=${page}&limit=${limit}`
@@ -181,13 +181,14 @@ export const getAllProductsReqs = async (page: number, limit: number, filters: a
 //---------------------------------------------------------بروز رسانی محصولات   
 
 
-export const fetchEditProducts = async (id: string, data: IAddProduct) => {
+export const fetchEditProducts = async (id: string, data: AddProduct) => {
   try {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("brand", data.brand);
     formData.append("description", data.description);
-    formData.append("quantity", data.quantity);
+    formData.append("quantity", data.quantity.toString()); // tabdile be string
+    formData.append("price", data.price.toString()); // tabdile be string
 
     if (data.images && data.images.length > 0) {
       data.images.forEach((image, index) => {
@@ -201,15 +202,14 @@ export const fetchEditProducts = async (id: string, data: IAddProduct) => {
 
     formData.append("subcategory", data.subcategory);
     formData.append("category", data.category);
-    formData.append("price", data.price);
 
     const response = await apiClient.patch(urls.productId(id), formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    
+
     console.log('response :', response);
     return response.data;
-  } catch (error : any) {
+  } catch (error: any) {
     console.error("Error saving the product:", error.response?.data || error.message);
     throw error;
   }

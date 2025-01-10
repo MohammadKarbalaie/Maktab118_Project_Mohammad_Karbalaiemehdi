@@ -1,5 +1,5 @@
 'use client'
-import { store } from "@/store/store";
+import { store } from "../../../app/redux/store";
 import { Provider } from "react-redux";
 
 export default function UserLayout({

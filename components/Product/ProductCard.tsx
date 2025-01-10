@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 import Link from "next/link";
 import React from "react";
@@ -48,7 +49,7 @@ alt={product.name}
 </Link>
 </div>
 
-{/* Product Details */}
+
 <div className="p-4">
 <h3 className="text-lg font-semibold mb-2 text-gray-800 truncate">
 {product.name}
@@ -58,12 +59,12 @@ alt={product.name}
 </p>
 
 <div className="flex justify-between items-center mt-4">
-{/* Product Price */}
+
 <span className="text-lg font-bold text-indigo-600">
 {product.price} تومان
 </span>
 
-{/* Add to Cart Button */}
+
 <button
 className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 shadow"
 onClick={handleAddToCart}

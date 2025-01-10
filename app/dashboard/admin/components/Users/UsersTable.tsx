@@ -42,7 +42,6 @@ const UsersTable = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
     >
-      {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <h2 className="text-lg md:text-xl font-semibold text-gray-950 mb-4 sm:mb-0">
           کاربران

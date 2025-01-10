@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { IAddProduct, Product, ProductData } from "../../../../../types/product";
+import { IAddProduct, Product } from "../../../../../types/product";
 import { IProduct } from "../../../../../types/product";
 import { urls } from "../../../../../services/urls";
 import apiClient from "../../../../../services/api";
@@ -8,6 +8,8 @@ import CustomUpload from "../Upload";
 import { fetchEditProducts } from "../../../../../services/product-service";
 import { Category } from "@/types/category";
 import { ISubcategory } from "@/types/subcategory";
+import { toast } from "react-hot-toast";
+
 
 export const getCategories = async () => {
   try {
@@ -31,7 +33,7 @@ export const getSubCategories = async () => {
 
 interface EditProductModalProps {
   onClose: () => void;
-  product: Product;
+  product: IProduct;
   onSave: (productData: Product) => Promise<void>;
 }
 
@@ -83,26 +85,44 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
   const handleSave = async () => {
     const updatedProduct: IAddProduct = {
-      name,
-      category,
-      subcategory,
-      price,
-      quantity,
-      thumbnail,
-      brand,
-      description,
-      images,
+        name,
+        category,
+        subcategory,
+        price,
+        quantity,
+        thumbnail,
+        brand,
+        description,
+        images,
     };
 
     try {
-      await fetchEditProducts(product._id, updatedProduct);
-      onSave(updatedProduct as Product);
-      onClose();
+        await fetchEditProducts(product._id, updatedProduct);
+
+        toast.success("ویرایش محصول با موفقیت انجام شد.", {
+            position: "top-right",
+            style: {
+                backgroundColor: "green",
+                color: "white",
+            },
+        });
+
+        onSave(updatedProduct as Product);
+
+        onClose();
     } catch (error) {
-      console.error("Error saving the product:", error);
-      alert("Error saving the product! Please try again.");
+        console.error("Error saving the product:", error);
+
+        toast.error("خطا در ذخیره محصول! لطفاً دوباره تلاش کنید.", {
+            position: "top-right",
+            style: {
+                backgroundColor: "red",
+                color: "white",
+            },
+        });
     }
-  };
+};
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -120,7 +140,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           <input
             type="number"
             value={quantity}
-            onChange={(e) => setQuantity((e.target.value))}
+            onChange={(e) => setQuantity(parseInt(e.target.value))}
             placeholder="Quantity"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />
@@ -128,7 +148,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           <input
             type="number"
             value={price}
-            onChange={(e) => setPrice((e.target.value))}
+            onChange={(e) => setPrice(parseInt(e.target.value))}
             placeholder="Price"
             className="p-2 bg-gray-700 text-white rounded-lg"
           />

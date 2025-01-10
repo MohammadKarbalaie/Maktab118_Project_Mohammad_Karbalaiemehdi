@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useState } from "react";  
 import { BiArrowToLeft, BiArrowToRight } from "react-icons/bi";

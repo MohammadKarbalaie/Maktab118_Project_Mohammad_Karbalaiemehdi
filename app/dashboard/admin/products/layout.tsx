@@ -1,5 +1,5 @@
 import AdminGuard from "@/components/AdminGuard";
-import { AuthProvider } from "@/context/AuthContext";
+
 
 export default function DashLayout({
   children,
@@ -8,9 +8,9 @@ export default function DashLayout({
 }>) {
   return (
     <div>
-      <AuthProvider>
-        <AdminGuard>{children}</AdminGuard>
-      </AuthProvider>
+      <AdminGuard>
+      {children}
+      </AdminGuard>
     </div>
   );
 }

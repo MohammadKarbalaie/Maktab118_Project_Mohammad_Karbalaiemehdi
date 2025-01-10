@@ -7,6 +7,9 @@ import { ICategory } from "../../../../../types/category";
 import { Subcategory } from "../../../../../types/subcategory";
 import {ProductData} from "../../../../../types/product";;
 import CustomUpload from "../Upload";
+import { toast } from "react-hot-toast";
+import { ErrorHandler } from "@/utils/ErrorHandler";
+
 
 const AddProductModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [product, setProduct] = useState<ProductData>({
@@ -97,38 +100,50 @@ const AddProductModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("category", product.category);
-      formData.append("subcategory", product.subcategory);
-      formData.append("name", product.name);
-      formData.append("price", product.price.toString());
-      formData.append("quantity", product.quantity.toString());
-      formData.append("brand", product.brand);
-      formData.append("description", product.description);
+        const formData = new FormData();
+        formData.append("category", product.category);
+        formData.append("subcategory", product.subcategory);
+        formData.append("name", product.name);
+        formData.append("price", product.price.toString());
+        formData.append("quantity", product.quantity.toString());
+        formData.append("brand", product.brand);
+        formData.append("description", product.description);
 
-      if (product.thumbnail) formData.append("thumbnail", product.thumbnail);
-      product.images.forEach((image) => formData.append("images", image));
+        if (product.thumbnail) formData.append("thumbnail", product.thumbnail);
+        product.images.forEach((image) => formData.append("images", image));
 
-      await addProduct(formData);
-      setSuccessMessage("کالای جدید با موفقیت اضافه شد.");
-      setError(null);
-      setProduct({
-        category: "",
-        subcategory: "",
-        name: "",
-        price: 0,
-        quantity: 0,
-        brand: "",
-        description: "",
-        thumbnail:null,
-        images: [],
-      });
+        await addProduct(formData);
+
+        // نمایش پیغام موفقیت
+        toast.success("کالای جدید با موفقیت اضافه شد.", {
+            position: "top-right",
+            style: {
+                backgroundColor: "green",
+                color: "white",
+            },
+        });
+
+        // بستن مودال
+        onClose();
+
+        setProduct({
+            category: "",
+            subcategory: "",
+            name: "",
+            price: 0,
+            quantity: 0,
+            brand: "",
+            description: "",
+            thumbnail: null,
+            images: [],
+        });
     } catch (error) {
-      setError("خطا در افزودن کالا. لطفاً دوباره تلاش کنید.");
+        ErrorHandler(error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

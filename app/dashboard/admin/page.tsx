@@ -11,6 +11,7 @@ function Page() {
   };
 
   return (
+    
     <div className="w-full flex flex-col lg:flex-row gap-4 lg:gap-8 bg-gray-50">
       <div className="hidden lg:block lg:w-1/4">
         <Sidebar />
