@@ -10,7 +10,7 @@ export default function ProductLayout({
     <div className={`antialiased`}>
         <Header/>
         {children}
-        <Footer/>
+        <Footer/>   
     </div>
   );
 }

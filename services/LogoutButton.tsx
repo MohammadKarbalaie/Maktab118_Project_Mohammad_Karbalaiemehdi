@@ -15,6 +15,10 @@ const LogoutButton: React.FC = () => {
 
   const handleLogout = () => {
     removeTokens();  
+    Cookies.remove('role')
+    Cookies.remove('token')
+    Cookies.remove('user')
+
 
     const accessToken = Cookies.get('access_token');
     if (!accessToken) {

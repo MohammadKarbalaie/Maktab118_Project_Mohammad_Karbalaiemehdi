@@ -1,42 +1,14 @@
-"use client"
-import React, { use, useEffect, useState } from "react";
+"use client";
+
+import React from "react";
+import { useParams } from "next/navigation";
 import ProductDetails from "../../../components/Product/ProductDetailes";
-import { getProductById } from "../../../services/product-service";
-import { IProductById } from "../../../types/product";
 
+const ProductPage: React.FC = () => {
+  const params = useParams();
+  const id = params.id as string;
 
-interface ProductPageProps {
-  params: Promise<{ id: string }>;
-}
+  return <ProductDetails productId={id} />;
+};
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const { id } = use(params); 
-  const [product, setProduct] = useState<IProductById["data"]["product"] | null>(
-    null
-  );
-
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await getProductById(id);
-        if (response?.data?.product) {
-          setProduct(response.data.product);
-        }
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-      }
-    };
-
-    fetchProductDetails();
-  }, [id]);
-
-  if (!product) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div>
-    <ProductDetails product={product} />    
-    </div>
-  );
-}
+export default ProductPage;

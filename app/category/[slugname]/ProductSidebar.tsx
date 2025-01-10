@@ -1,157 +1,171 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Category } from "../../../types/category";
-import { ISubcategory } from "../../../types/subcategory";
-import { Product } from "../../../types/product";
-import Link from "next/link";
-import { BiBasket } from "react-icons/bi";
-import { useCart } from "../../../context/CartContext"; // وارد کردن Context
 
-const Sidebar = () => {
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/slices/cartSlice"; 
+import { getProductsByCategoryId } from "../../../services/product-service"; 
+import { Product } from "../../../types/product";
+import { Category } from "../../../types/category"; 
+import { ISubcategory } from "../../../types/subcategory"; 
+import { BiBasket } from "react-icons/bi";
+import Link from "next/link";
+
+const ProductsWithSidebar = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<ISubcategory[]>([]);
-  const [filteredSubcategories, setFilteredSubcategories] = useState<
-    ISubcategory[]
-  >([]);
-  const [products, setProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
-  const { addToCart } = useCart(); // دسترسی به `addToCart` از context
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
   const apiUrl = "http://localhost:8000/api";
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/categories`)
-      .then((response) => {
-        setCategories(response.data.data.categories);
-      })
-      .catch((error) => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/categories`);
+        const data = await response.json();
+        setCategories(data.data.categories);
+      } catch (error) {
         console.error("Error fetching categories:", error);
-      });
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/subcategories`)
-      .then((response) => {
-        setSubcategories(response.data.data.subcategories);
-      })
-      .catch((error) => {
+    const fetchSubcategories = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/subcategories`);
+        const data = await response.json();
+        setSubcategories(data.data.subcategories);
+      } catch (error) {
         console.error("Error fetching subcategories:", error);
-      });
+      }
+    };
+
+    fetchSubcategories();
   }, []);
 
-  useEffect(() => {
-    if (selectedCategory) {
-      const filtered = subcategories.filter(
-        (subcategory) => subcategory.category === selectedCategory
+  const fetchProducts = async (categoryId: string, subcategoryId: string) => {
+    setLoading(true);
+    try {
+      const response = await getProductsByCategoryId(categoryId, 1, 10);
+      console.log("API Response:", response);
+      const products = response?.products || []; 
+      setProducts(
+        subcategoryId
+          ? products.filter(
+              (product: { subcategory: string }) =>
+                product.subcategory === subcategoryId
+            )
+          : products
       );
-      setFilteredSubcategories(filtered);
-    } else {
-      setFilteredSubcategories([]);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setProducts([]); 
+    } finally {
+      setLoading(false);
     }
-  }, [selectedCategory, subcategories]);
+  };
 
-  useEffect(() => {
-    if (selectedCategory || selectedSubcategory) {
-      axios
-        .get(`${apiUrl}/products`)
-        .then((response) => {
-          const filteredProducts = response.data.data.products.filter(
-            (product: Product) => {
-              const categoryMatch = selectedCategory
-                ? product.category === selectedCategory
-                : true;
-              const subcategoryMatch = selectedSubcategory
-                ? product.subcategory === selectedSubcategory
-                : true;
-              return categoryMatch && subcategoryMatch;
-            }
-          );
-
-          setProducts(filteredProducts);
-        })
-        .catch((error) => {
-          console.error("Error fetching products:", error);
-        });
-    }
-  }, [selectedCategory, selectedSubcategory]);
+  const handleCategoryClick = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setSelectedSubcategory("");
+    fetchProducts(categoryId, "");
+  };
+  const handleSubcategoryClick = (subcategoryId: string) => {
+    setSelectedSubcategory(subcategoryId);
+    fetchProducts(selectedCategory, subcategoryId);
+  };
+  const handleAddToCart = (product: Product) => {
+    dispatch(addToCart(product));
+  };
 
   return (
-    <div className="w-6/6 flex gap-8">
-      <div className="w-1/6 border p-4 m-4">
-        <h2>دسته‌بندی‌ها</h2>
-        <select
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-20 items-start justify-start"
-        >
-          <option value="">انتخاب دسته‌بندی</option>
+    <div className="flex">
+      <div className="w-80 border-r p-4">
+        <h2 className="text-xl font-bold mb-4">دسته‌بندی‌ها</h2>
+        <ul>
           {categories.map((category) => (
-            <option key={category._id} value={category._id}>
-              {category.name}
-            </option>
+            <li key={category._id} className="mb-2">
+              <div
+                className={`cursor-pointer p-2 ${
+                  selectedCategory === category._id ? "bg-gray-200" : ""
+                }`}
+                onClick={() => handleCategoryClick(category._id)}
+              >
+                {category.name}
+              </div>
+              {selectedCategory === category._id && (
+                <ul className="ml-4 mt-2">
+                  {subcategories
+                    .filter((sub) => sub.category === category._id)
+                    .map((subcategory) => (
+                      <li
+                        key={subcategory._id}
+                        className={`cursor-pointer p-1 ${
+                          selectedSubcategory === subcategory._id
+                            ? "bg-gray-100"
+                            : ""
+                        }`}
+                        onClick={() => handleSubcategoryClick(subcategory._id)}
+                      >
+                        {subcategory.name}
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </li>
           ))}
-        </select>
-
-        {selectedCategory && (
-          <>
-            <h3>زیر دسته‌بندی‌ها</h3>
-            <select onChange={(e) => setSelectedSubcategory(e.target.value)}>
-              <option value="">انتخاب زیر دسته‌بندی</option>
-              {filteredSubcategories.map((subcategory) => (
-                <option key={subcategory._id} value={subcategory._id}>
-                  {subcategory.name}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
+        </ul>
       </div>
 
-      <h1 className="text-3xl">محصولات</h1>
-      <div className="products grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div
-              key={product._id}
-              className="product-card bg-white rounded-lg shadow-md hover:shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 cursor-pointer"
-            >
-              <Link
-                href={`/Shop/product/${product._id}`}
-                className="block"
-              >
-                <img
-                  src={`http://localhost:8000/images/products/images/${product.images[0]}`}
-                  alt={product.name}
-                  className="product-image w-full h-60"
-                />
-              </Link>
-              <div className="product-info p-4">
-                <h4 className="product-name text-xl font-semibold text-gray-800">
-                  {product.name}
-                </h4>
-                <div className="flex justify-between">
-                  <p className="product-price text-lg font-semibold text-teal-500 mt-4">
-                    قیمت: {product.price} تومان
+      <div className="w-3/4 p-4">
+        <h1 className="text-2xl font-bold mb-4">محصولات</h1>
+        {loading ? (
+          <p>در حال بارگذاری...</p>
+        ) : products.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {products.map((product: Product) => (
+              <Link href={`/product/${product._id}`} key={product._id}>
+                <div className="border rounded-lg shadow-lg p-4 flex flex-col justify-between cursor-pointer hover:shadow-xl">
+                  <img
+                    src={
+                      product.images && product.images.length > 0
+                        ? `http://localhost:8000/images/products/images/${product.images[0]}`
+                        : "/placeholder.png"
+                    }
+                    alt={product.name || "محصول"}
+                    className="w-full h-60 object-cover rounded-md mb-4"
+                  />
+                  <h2 className="text-lg font-bold">{product.name}</h2>
+                  <p className="text-teal-600 font-semibold">
+                    {product.price.toLocaleString()} تومان
                   </p>
                   <button
-                    className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-500 flex items-center"
-                    onClick={() => addToCart(product)} // افزودن محصول به سبد خرید
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg mt-4 flex items-center justify-center hover:bg-indigo-500"
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      handleAddToCart(product);
+                    }}
                   >
-                    <BiBasket className="text-2xl" />
+                    <BiBasket className="mr-2" />
+                    افزودن به سبد خرید
                   </button>
                 </div>
-              </div>
-            </div>
-          ))
+              </Link>
+            ))}
+          </div>
         ) : (
-          <p>هیچ محصولی برای نمایش یافت نشد</p>
+          <p>هیچ محصولی برای نمایش وجود ندارد.</p>
         )}
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default ProductsWithSidebar;

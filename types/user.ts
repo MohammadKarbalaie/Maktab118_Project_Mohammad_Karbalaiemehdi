@@ -18,6 +18,7 @@ export interface IIUser {
     lastname: string;
     username: string;
     phoneNumber: number;
+    password: string | undefined;
     address: string;
     role: string;
     createdAt: string;
@@ -25,9 +26,13 @@ export interface IIUser {
 }
 
 
-export interface UserResponse{
+export interface LoginResponse {
+    data: {
+      user: IIUser; 
+    };
     token: {
-        accessToken: string;
-        refreshToken: string;
-      };
-}
+      accessToken: string;
+      refreshToken: string;
+    };
+  }
+  
