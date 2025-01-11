@@ -1,145 +1,108 @@
 export interface ProductData {
-    name: string;
-    category: string;
-    subcategory: string;
-    price: number;
-    quantity: number;
-    brand: string;
-    description: string;
-    thumbnail: File | null;
-    images: File[];
-  }
-  
-  export interface IProduct {
-      _id:string
-      name: string;
-      category: string;
-      subcategory: string;
-      price: number;
-      quantity: number;
-      brand: string;
-      description: string;
-      thumbnail: File | null; 
-      images: File[]; 
-    }
+  name: string;
+  category: string;
+  subcategory: string;
+  price: number;
+  quantity: number;
+  brand: string;
+  description: string;
+  thumbnail: File | null;
+  images: File[];
+}
 
+export interface IProduct {
+  _id: string;
+  name: string;
+  category: string;
+  subcategory: string;
+  price: number;
+  quantity: number;
+  brand: string;
+  description: string;
+  thumbnail: File | null;
+  images: File[];
+}
 
-    
+export interface ProductInOrder {
+  product: IProduct | null; // مرتبط با محصول
+  count: number; // تعداد محصول
+  price: number; // قیمت محصول
+}
 
-    export interface I_Product {
-      _id:string
-      name: string;
-      price: number;
-      quantity: number;
-    }
-    
-    
-    export interface Product {
-      _id:string;
-      category: string;
-      subcategory: string;
-      name: string;
-      price: number;
-      quantity: number;
-      brand: string;
-      description: string;
-      thumbnail:File | null
-      images: File[];
-    }
+export interface IOrder {
+  _id: string; // شناسه سفارش
+  user: string; // شناسه کاربر
+  products: ProductInOrder[]; // لیست محصولات داخل سفارش
+  totalPrice: number; // جمع کل مبلغ سفارش
+  deliveryStatus: boolean; // وضعیت ارسال
+  deliveryDate: string; // تاریخ ارسال
+}
 
-    export interface IIIProduct {
-      _id:string;
-      category: string;
-      subcategory: string;
+export interface GetProductsResponse {
+  page: number;
+  per_page: number;
+  total: number;
+  total_pages: number;
+  data: {
+    products: IProduct[];
+  };
+}
+
+export interface IProductById {
+  data: {
+    product: {
+      _id: string;
       name: string;
-      price: string;
-      quantity: string;
-      brand: string;
-      description: string;
-      thumbnail:File | null
-      images: File[];
-    }
-    
-    export interface GetProductsResponse {
-      page: number;
-      per_page: number;
-      total: number;
-      total_pages: number;
-      data: {
-        products: IProduct[];
+      category: {
+        name: string;
       };
-    }
-  
-    export interface IProductById {
-      status: string;
-      data: {
-        product: {
-          [x: string]: any;
-          rating: {
-            rate: number;
-            count: number;
-          };
-          _id: string;
-          category: {
-            _id: string;
-            name: string;
-            icon: string;
-            createdAt: string;
-            updatedAt: string;
-            slugname: string;
-            __v: number;
-          };
-          subcategory: {
-            _id: string;
-            category: string;
-            name: string;
-            createdAt: string;
-            updatedAt: string;
-            slugname: string;
-            __v: number;
-          };
-          name: string;
-          price: number;
-          quantity: number;
-          brand: string;
-          description: string;
-          thumbnail: File | null;
-          images: File[];
-          createdAt: string;
-          updatedAt: string;
-          slugname: string;
-          __v: number;
-        };
+      subcategory: {
+        name: string;
       };
-    }
-  
-    export interface IAddProduct {
-      name: string;
-      brand: string;
-      subcategory: string;
-      category: string;
       price: number;
       quantity: number;
-      description: string;
-      thumbnail:File | null
-      images: File[];
-    }
-
-    export interface AddProduct {
-      name: string;
       brand: string;
-      subcategory: string;
-      category: string;
-      price: number;
-      quantity: number;
       description: string;
-      thumbnail:File | null
+      thumbnail: File | null;
       images: File[];
-    }
+    };
+  };
+}
 
 
-  
-  
-  
-  
-  
+export interface IAddProduct {
+  name: string;
+  brand: string;
+  subcategory: string;
+  category: string;
+  price: number;
+  quantity: number;
+  description: string;
+  thumbnail: File | null;
+  images: File[];
+}
+
+export interface Product {
+  _id:string;
+  category: string;
+  subcategory: string;
+  name: string;
+  price: number;
+  quantity: number;
+  brand: string;
+  description: string;
+  thumbnail:File | null
+  images: File[];
+}
+
+export interface AddProduct {
+  name: string;
+  brand: string;
+  subcategory: string;
+  category: string;
+  price: number;
+  quantity: number;
+  description: string;
+  thumbnail:File | null
+  images: File[];
+}

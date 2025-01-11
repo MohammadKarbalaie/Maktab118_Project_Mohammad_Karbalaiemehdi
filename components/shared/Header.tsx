@@ -19,7 +19,6 @@ function Header() {
   const [isCartVisible, setIsCartVisible] = useState<boolean>(false);
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const user = useSelector((state: RootState) => state.cart.user);
 
   useEffect(() => {
     const fetchCategories = async () => {

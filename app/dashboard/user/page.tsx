@@ -5,8 +5,6 @@ import PersonalInfo from './components/PersonalInfo';
 import BillingPayments from './components/BillingPayments';
 import OrderHistory from './components/OrderHistory';
 import LogoutButton from '@/services/LogoutButton'; 
-import { useSelector } from "react-redux";
-import { RootState } from "../../../app/redux/store";
 import Link from 'next/link';
 import Cookies from "js-cookie";
 
@@ -23,7 +21,7 @@ const AccountPage = () => {
       <header className="flex justify-between items-center bg-gray-100 p-4">
         <h1 className="flex gap-2 text-2xl font-bold">
           <BiUser className="text-red-600" />
-          {user.username}
+          {user ? user.username : "مهمان"}
         </h1>
         <LogoutButton />  
       </header>

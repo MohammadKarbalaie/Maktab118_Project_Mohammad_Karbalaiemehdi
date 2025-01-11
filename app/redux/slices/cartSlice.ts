@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { IIUser } from '@/types/user';
-import { Product } from '../../../types/product';
+import { Product } from '@/types/product';
 
 export interface CartItem extends Product {
   cartQuantity: number;
@@ -54,8 +54,13 @@ export const fetchCartFromDatabase = createAsyncThunk(
 
 export const clearCartFromDatabase = createAsyncThunk(
   'cart/clearCartFromDatabase',
-  async (userId: string) => {
-    const response = await axios.delete(`/api/cart?userId=${userId}`);
+  async (_, { getState }) => {
+    const state = getState() as { cart: CartState };
+    const { user } = state.cart;
+    if (!user) {
+      throw new Error('User not logged in');
+    }
+    const response = await axios.delete(`/api/cart?userId=${user._id}`);
     return response.data;
   }
 );
@@ -69,7 +74,7 @@ export const syncCartWithDatabase = createAsyncThunk(
       return items; 
     }
     const response = await axios.post('/api/cart/sync', { userId: user._id, items });
-    return response.data;
+    return response.data.items;
   }
 );
 
@@ -87,6 +92,27 @@ export const mergeAndSaveCart = createAsyncThunk(
   }
 );
 
+export const initializeCart = createAsyncThunk(
+  'cart/initializeCart',
+  async (_, { getState }) => {
+    const state = getState() as { cart: CartState };
+    const { user } = state.cart;
+    
+    if (user) {
+      try {
+        const response = await axios.get(`/api/cart/init?userId=${user._id}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching cart:', error);
+        throw error;
+      }
+    } else {
+      const localCart = localStorage.getItem('guestCart');
+      return localCart ? JSON.parse(localCart) : [];
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -98,30 +124,49 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ ...action.payload, cartQuantity: 1 });
       }
+      if (!state.user) {
+        localStorage.setItem('guestCart', JSON.stringify(state.items));
+      }
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(item => item._id !== action.payload);
+      if (!state.user) {
+        localStorage.setItem('guestCart', JSON.stringify(state.items));
+      }
     },
     updateCartItemQuantity: (state, action: PayloadAction<{ id: string; quantity: number }>) => {
       const item = state.items.find(item => item._id === action.payload.id);
       if (item) {
         item.cartQuantity = action.payload.quantity;
       }
+      if (!state.user) {
+        localStorage.setItem('guestCart', JSON.stringify(state.items));
+      }
     },
     clearCart: (state) => {
       state.items = [];
+      if (!state.user) {
+        localStorage.removeItem('guestCart');
+      }
     },
     clearGuestCart: (state) => {
       state.items = [];
+      localStorage.removeItem('guestCart');
     },
     incrementCartItem: (state, action: PayloadAction<string>) => {
       const item = state.items.find(item => item._id === action.payload);
       if (item) {
         item.cartQuantity++;
       }
+      if (!state.user) {
+        localStorage.setItem('guestCart', JSON.stringify(state.items));
+      }
     },
     setUser: (state, action: PayloadAction<IIUser | null>) => {
       state.user = action.payload;
+      if (action.payload) {
+        state.status = 'idle'; // Reset status to trigger re-initialization
+      }
     },
     mergeGuestCartWithUserCart: (state, action: PayloadAction<CartItem[]>) => {
       action.payload.forEach(guestItem => {
@@ -150,7 +195,8 @@ const cartSlice = createSlice({
           existingItem.cartQuantity = updatedProduct.cartQuantity;
         }
       })
-      .addCase(saveCartToDatabase.fulfilled, (state) => {
+      .addCase(saveCartToDatabase.fulfilled, () => {
+        // You can add any additional logic here if needed
       })
       .addCase(fetchCartFromDatabase.fulfilled, (state, action) => {
         state.items = action.payload || []; 
@@ -164,6 +210,18 @@ const cartSlice = createSlice({
         if (state.user) {
           state.items = action.payload;
         }
+      })
+      .addCase(initializeCart.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(initializeCart.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.cartItems = action.payload;
+        state.status = 'succeeded';
+      })
+      .addCase(initializeCart.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to initialize cart';
       });
   },
 });
@@ -182,3 +240,4 @@ export const {
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
+

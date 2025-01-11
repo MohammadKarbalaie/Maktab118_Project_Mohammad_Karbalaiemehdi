@@ -21,7 +21,6 @@ import Cookies from "js-cookie";
 import { AppDispatch, RootState } from "../../../../../app/redux/store";
 import FormField from "./FormField";
 import { schema, FormValues } from "./fromschema";
-import { Phone } from "lucide-react";
 
 const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +50,7 @@ const LoginPage: React.FC = () => {
 
       await dispatch(mergeAndSaveCart(guestCart));
 
-      Cookies.set("user", JSON.stringify({id:user._id ,username:user.username,firstname:user.firstname
+      Cookies.set("user", JSON.stringify({_id:user._id ,username:user.username,firstname:user.firstname
         ,lastname:user.lastname,phoneNumber:user.phoneNumber,address:user.address
       }));
       Cookies.set("role", user.role);

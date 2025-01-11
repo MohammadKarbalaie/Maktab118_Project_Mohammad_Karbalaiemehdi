@@ -1,17 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import {
   removeFromCart,
   updateCartItemQuantity,
   clearCart,
+  clearCartFromDatabase,
   syncCartWithDatabase,
+  initializeCart,
 } from "../redux/slices/cartSlice";
-import { X, Minus, Plus, Trash2 } from "lucide-react";
+import { X, Minus, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 
 interface CartProps {
   onClose: () => void;
@@ -20,10 +21,15 @@ interface CartProps {
 const Cart: React.FC<CartProps> = ({ onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  // const user = useSelector((state: RootState) => state.cart.user);
+  const cartStatus = useSelector((state: RootState) => state.cart.status);
+  const user = useSelector((state: RootState) => state.cart.user);
   const router = useRouter();
-  const Auth = Cookies.get("user");
-  const user = Auth ? JSON.parse(Auth) : undefined;
+
+  useEffect(() => {
+    if (cartStatus === 'idle') {
+      dispatch(initializeCart());
+    }
+  }, [dispatch, cartStatus]);
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.cartQuantity,
@@ -47,9 +53,10 @@ const Cart: React.FC<CartProps> = ({ onClose }) => {
   };
 
   const handleClearCart = () => {
-    dispatch(clearCart());
     if (user) {
-      dispatch(syncCartWithDatabase());
+      dispatch(clearCartFromDatabase());
+    } else {
+      dispatch(clearCart());
     }
   };
 
@@ -61,6 +68,10 @@ const Cart: React.FC<CartProps> = ({ onClose }) => {
     }
     onClose();
   };
+
+  if (cartStatus === 'loading') {
+    return <div>Loading cart...</div>;
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
@@ -141,3 +152,4 @@ const Cart: React.FC<CartProps> = ({ onClose }) => {
 };
 
 export default Cart;
+

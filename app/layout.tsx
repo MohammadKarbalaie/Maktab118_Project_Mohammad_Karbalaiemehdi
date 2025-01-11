@@ -3,6 +3,7 @@ import './globals.css'
 import { Vazirmatn } from "next/font/google";
 import { Providers } from './providers'
 import { Toaster } from "react-hot-toast";
+import { CartInitializer } from "./components/CartInitializer";
 
 const vazir = Vazirmatn({
   subsets: ["latin", "arabic"],
@@ -25,7 +26,9 @@ export default function RootLayout({
       <body className={vazir.className}>
         <Providers>
           <Toaster/>
+          <CartInitializer>
           {children}
+          </CartInitializer>
         </Providers>
       </body>
     </html>

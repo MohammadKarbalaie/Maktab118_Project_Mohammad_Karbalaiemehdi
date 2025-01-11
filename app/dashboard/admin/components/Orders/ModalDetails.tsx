@@ -1,8 +1,8 @@
-// components/Modal.tsx
 import React, { useState, useEffect } from "react";
 import moment from "jalali-moment";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import axios from "axios";
+import {IOrder} from "@/types/order";
+import { ProductInOrder } from "@/types/product";
 
 interface ModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ const Modal: React.FC<ModalProps> = ({
   toggleDeliveryStatus,
   orders,
 }) => {
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<IOrder | null>(null);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -60,9 +60,12 @@ const Modal: React.FC<ModalProps> = ({
           مشتری: {orderDetails.user.firstname} {orderDetails.user.lastname}
         </p>
         <p className="mb-2">
-          تاریخ: {moment(orderDetails.deliveryDate).locale("fa").format("YYYY/MM/DD")}
+          تاریخ:{" "}
+          {moment(orderDetails.deliveryDate).locale("fa").format("YYYY/MM/DD")}
         </p>
-        <p className="mb-4">جمع مبلغ: ${orderDetails.totalPrice.toLocaleString()}</p>
+        <p className="mb-4">
+          جمع مبلغ: ${orderDetails.totalPrice.toLocaleString()}
+        </p>
 
         <h3 className="text-md font-semibold mb-2">محصولات:</h3>
         <table className="table-auto w-full border-collapse border border-gray-400">
@@ -74,7 +77,7 @@ const Modal: React.FC<ModalProps> = ({
             </tr>
           </thead>
           <tbody>
-            {orderDetails.products.map((product: any, index: number) => (
+            {orderDetails.products.map((product: ProductInOrder, index: number) => (
               <tr key={index}>
                 <td className="border border-gray-300 px-4 py-2">
                   {product.product ? product.product.name : "نامشخص"}
@@ -83,7 +86,7 @@ const Modal: React.FC<ModalProps> = ({
                   {product.count}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  ${product.price}
+                  {product.price} تومان
                 </td>
               </tr>
             ))}
@@ -97,7 +100,10 @@ const Modal: React.FC<ModalProps> = ({
                 currentOrder.deliveryStatus ? "bg-red-500" : "bg-green-500"
               } hover:opacity-80`}
               onClick={() =>
-                toggleDeliveryStatus(currentOrder._id, currentOrder.deliveryStatus)
+                toggleDeliveryStatus(
+                  currentOrder._id,
+                  currentOrder.deliveryStatus
+                )
               }
             >
               {currentOrder.deliveryStatus ? "لغو ارسال" : "تایید ارسال"}

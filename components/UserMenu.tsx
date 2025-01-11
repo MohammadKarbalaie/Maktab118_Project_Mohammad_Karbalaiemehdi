@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -16,7 +16,7 @@ const UserMenu: React.FC = () => {
   const router = useRouter();
 
   const Auth = Cookies.get("user");
-  const user = Auth ? JSON.parse(Auth) : undefined;
+  const user = Auth ? JSON.parse(decodeURIComponent(Auth)) : undefined;
 
   const handleLogout = () => {
     Cookies.remove("accessToken");

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -24,8 +25,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ productId }) => {
   ): Product => ({
     _id: data._id,
     name: data.name,
-    category: data.category.name,
-    subcategory: data.subcategory.name,
+    category: data.category.name, 
+    subcategory: data.subcategory.name, 
     price: data.price,
     quantity: data.quantity,
     brand: data.brand,
@@ -94,7 +95,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ productId }) => {
                 }`}
               >
                 <img
-                  src={`http://localhost:8000/images/products/images/${selectedImage}`}
+                  src={`http://localhost:8000/images/products/images/${img}`}
                   alt={`Thumbnail ${index}`}
                   className="object-cover h-full w-full rounded-lg"
                 />

@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Search } from 'lucide-react';
 import {
   AiOutlineHourglass,
-  AiOutlineSend,
 } from "react-icons/ai";
 import Modal from "./ModalDetails";
 import moment from "jalali-moment";
@@ -22,7 +21,6 @@ const OrdersTable: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -58,7 +56,7 @@ const OrdersTable: React.FC = () => {
     const filtered = orders.filter(
       (order) =>
         order._id.toLowerCase().includes(term) ||
-        order.user.toLowerCase().includes(term)
+        getUserNameById(order.user).toLowerCase().includes(term)
     );
     setFilteredOrders(filtered);
   };
@@ -85,12 +83,9 @@ const OrdersTable: React.FC = () => {
   ) => {
     try {
       const newStatus = !currentStatus;
-      console.log(`Updating order ${orderId} to status: ${newStatus}`);
       const response = await apiClient.patch(`/orders/${orderId}`, {
         deliveryStatus: newStatus,
       });
-
-      console.log('Server response:', response.data);
 
       if (response.data.status === 'success' && response.data.data.order) {
         const updatedOrder = response.data.data.order;
@@ -104,24 +99,12 @@ const OrdersTable: React.FC = () => {
             order._id === orderId ? { ...order, ...updatedOrder } : order
           )
         );
-        console.log(`Successfully updated order ${orderId} status to ${newStatus}`);
       } else {
         throw new Error(response.data.error || 'Unexpected server response format');
       }
     } catch (error) {
       console.error("Error updating delivery status:", error);
-      let errorMessage = "خطا در به‌روزرسانی وضعیت سفارش. لطفاً دوباره تلاش کنید.";
-      if (error instanceof Error) {
-        errorMessage += ` علت: ${error.message}`;
-        if ('response' in error && error.response) {
-          // @ts-ignore
-          const responseData = error.response.data;
-          if (responseData && responseData.details) {
-            errorMessage += `\nجزئیات خطا: ${responseData.details}`;
-          }
-        }
-      }
-      alert(errorMessage);
+      alert("خطا در به‌روزرسانی وضعیت سفارش. لطفاً دوباره تلاش کنید.");
     }
   };
 
@@ -197,7 +180,7 @@ const OrdersTable: React.FC = () => {
                     {getUserNameById(order.user)}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-950">
-                    ${order.totalPrice.toLocaleString()}
+                    {order.totalPrice.toLocaleString()} تومان
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">
                     <span
@@ -216,14 +199,6 @@ const OrdersTable: React.FC = () => {
                       .format("YYYY/MM/DD")}
                   </td>
                   <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-950 flex gap-2">
-                    {/* <button
-                      className="text-green-600 hover:text-indigo-300"
-                      onClick={() =>
-                        toggleDeliveryStatus(order._id, order.deliveryStatus)
-                      }
-                    >
-                      <AiOutlineSend size={18} />
-                    </button> */}
                     <button
                       className="text-yellow-700 hover:text-indigo-300"
                       onClick={() => handleOpenModal(order._id)}
@@ -269,12 +244,11 @@ const OrdersTable: React.FC = () => {
         onClose={handleCloseModal}
         selectedOrderId={selectedOrderId}
         toggleDeliveryStatus={toggleDeliveryStatus}
-        orders={orders} getUserNameById={function (userId: string): string {
-          throw new Error("Function not implemented.");
-        } }      />
+        orders={orders}
+        getUserNameById={getUserNameById}
+      />
     </motion.div>
   );
 };
 
 export default OrdersTable;
-

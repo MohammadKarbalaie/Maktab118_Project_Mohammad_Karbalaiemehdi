@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import React, { useEffect, useState } from 'react'
@@ -6,21 +7,8 @@ import { addToCart, syncCartWithDatabase } from '../redux/slices/cartSlice'
 import { AppDispatch, RootState } from '../redux/store'
 import Link from 'next/link'
 import { BiBasket } from 'react-icons/bi'
-import { getAllProductsReq } from '../../services/product-service'
-import {Product} from '../../types/product';
-
-const defaultProduct: Product = {
-  _id: "",
-  name: "نامشخص",
-  price: 0,
-  quantity: 0,
-  category: '',
-  subcategory: '',
-  brand: '',
-  description: '',
-  thumbnail: null,
-  images: []
-}
+import { getAllProductsReq } from '@/services/product-service'
+import { Product } from '@/types/product'
 
 const ProductList = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -48,11 +36,6 @@ const ProductList = () => {
     dispatch(addToCart(product))
     dispatch(syncCartWithDatabase())
   }
-
-  const indexOfLastProduct = currentPage * productsPerPage
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-
 
   if (products.length === 0) {
     return <div className="text-center py-20">در حال بارگذاری محصولات...</div>

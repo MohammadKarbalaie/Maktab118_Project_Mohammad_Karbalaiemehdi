@@ -1,6 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -10,15 +11,21 @@ import DatePicker, {
 } from "@hassanmojab/react-modern-calendar-datepicker";
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
 import { persianLocale } from "../../utils/persianLocale";
+import { getUserFromCookie, isUserLoggedIn, UserData } from "../../utils/cookieUtils";
 
 function CheckoutPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState("credit-card");
   const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState("dhl");
+  const [user, setUser] = useState<UserData | null>(null);
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const user = useSelector((state: RootState) => state.cart.user);
   const router = useRouter();
+
+  useEffect(() => {
+    const loggedInUser = getUserFromCookie();
+    setUser(loggedInUser);
+  }, []);
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.cartQuantity,
@@ -34,14 +41,14 @@ function CheckoutPage() {
       alert("لطفاً تاریخ تحویل را انتخاب کنید");
       return;
     }
-    if (!user || !user._id) {
+    if (!isUserLoggedIn()) {
       alert("لطفاً وارد حساب کاربری خود شوید");
-      router.push("/login");
+      router.push("/auth/login");
       return;
     }
 
     const orderData = {
-      user: user._id,
+      user: user?._id,
       products: cartItems.map((item) => ({
         productId: item._id,
         quantity: item.cartQuantity,
@@ -58,7 +65,7 @@ function CheckoutPage() {
     localStorage.setItem("pendingOrder", JSON.stringify(orderData));
     router.push("/getway");
   };
-  
+
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
       <form
@@ -107,6 +114,7 @@ function CheckoutPage() {
                       id="your_name"
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                       placeholder="نام"
+                      defaultValue={user?.firstname || ''}
                     />
                   </div>
 
@@ -122,6 +130,7 @@ function CheckoutPage() {
                       id="your_lastname"
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                       placeholder="نام خانوادگی"
+                      defaultValue={user?.lastname || ''}
                     />
                   </div>
                 </div>
@@ -139,6 +148,7 @@ function CheckoutPage() {
                       id="your_username"
                       className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                       placeholder="نام کاربری"
+                      defaultValue={user?.username || ''}
                     />
                   </div>
                   <div className="relative w-full">
@@ -166,6 +176,7 @@ function CheckoutPage() {
                         id="phone-number"
                         className="block w-full px-[100px] rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                         placeholder="شماره تلفن خود را وارد کنید"
+                        defaultValue={user?.phoneNumber || ''}
                       />
                     </div>
                   </div>
@@ -182,6 +193,7 @@ function CheckoutPage() {
                     id="address"
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
                     placeholder="آدرس"
+                    defaultValue={user?.address || ''}
                   />
                 </div>
               </div>
@@ -373,3 +385,4 @@ function CheckoutPage() {
 }
 
 export default CheckoutPage;
+

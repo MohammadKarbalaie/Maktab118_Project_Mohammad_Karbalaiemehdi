@@ -55,7 +55,11 @@ export async function DELETE(request: Request) {
     const { collections } = await connectToDatabase()
     const result = await collections.cart.deleteOne({ userId: new ObjectId(userId) })
 
-    return NextResponse.json({ success: true, result })
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ message: 'Cart was already empty' }, { status: 200 })
+    }
+
+    return NextResponse.json({ success: true, message: 'Cart cleared successfully' })
   } catch (error) {
     console.error('Error deleting cart:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
